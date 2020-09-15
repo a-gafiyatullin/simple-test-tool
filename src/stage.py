@@ -32,7 +32,6 @@ class Stage(executable.Executable, ABC):
         parent_module_name: str
             a parent module name
         """
-
         executable.Executable.__init__(self, interrupt_if_fail)
         self._logger = logger.Logger(log_file_path, log_name, is_logging)
         self._parent_module_name = parent_module_name
@@ -46,5 +45,4 @@ class Stage(executable.Executable, ABC):
         message : str
            a message for writing to the log file
         """
-
         self._logger.log(self._parent_module_name + ': ' + message)

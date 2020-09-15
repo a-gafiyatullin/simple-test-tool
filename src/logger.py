@@ -54,7 +54,6 @@ class Logger:
         message : str
            a message for writing to the log file
         """
-
         if self._log_file is not None:
             self._log_file.write(message)
 
@@ -62,14 +61,12 @@ class Logger:
         """
         Return the log file path or None
         """
-
         return self._log_file_path
 
     def __del__(self):
         """
         Close the log file.
         """
-
         if self._log_file is not None:
             self._log_file.close()
 
