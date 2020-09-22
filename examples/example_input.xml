@@ -1,0 +1,63 @@
+<STT>
+    <Module Name="Module1">
+        <Dependencies>
+            <Dependency Name = "Module2.so" Path = "/home/user/Module1/" />
+            <Dependency Name = "Module3.a" Path = "/home/user/Module1/" />
+        </Dependencies>
+
+        <Outputs>
+            <Output Name = "Module1.exe" Path = "/home/user/Module1/" />
+        </Outputs>
+
+        <Stages>
+            <Build Type = "CMake" Path = "/home/user/Module1/" LogEnable = "On"
+                   LogName = "build.log" LogPath = "/home/user/Module1/" InterruptOnFail = "On" />
+
+            <VCS Type = "Git" LogEnable = "On" LogName = "vcs.log" LogPath = "/home/user/Module1/" InterruptOnFail = "On">
+                <Path Path = "/home/user/Module1/" />
+            </VCS>
+
+            <Test LogEnable = "On" LogName = "test.log" LogPath = "/home/user/Module1/" InterruptOnFail = "On">
+                <Path Path = "/home/user/Module1/test/test_tool1.sh" />
+                <Path Path = "/home/user/Module1/test/test_tool2.sh" />
+            </Test>
+
+            <Notification Type = "Email" EmailTo = "example@example.com"/>
+        </Stages>
+    </Module>
+
+    <Module Name="Module2">
+        <Dependencies>
+            <Dependency Name = "Module3.a" Path = "/home/user/Module2/" />
+        </Dependencies>
+
+        <Outputs>
+            <Output Name = "Module2.so" Path = "/home/user/Module2/" />
+        </Outputs>
+
+        <Stages>
+            <Build Type = "Make" Path = "/home/user/Module2/" LogEnable = "Off" InterruptOnFail = "On" />
+
+            <VCS Type = "SVN" LogEnable = "On" LogName = "vcs.log" LogPath = "/home/user/Module2/" InterruptOnFail = "Off">
+                <Path Path = "/home/user/Module2/" />
+            </VCS>
+
+            <Test LogEnable = "Off" InterruptOnFail = "On">
+                <Path Path = "/home/user/Module2/test/test_tool1.sh" />
+                <Path Path = "/home/user/Module2/test/test_tool2.sh" />
+            </Test>
+
+            <Notification Type = "Telegram"/>
+        </Stages>
+    </Module>
+
+    <Module Name="Module3">
+        <Outputs>
+            <Output Name = "Module3.a" Path = "/home/user/Module3/" />
+        </Outputs>
+
+        <Stages>
+            <Build Type = "Make" Path = "/home/user/Module3/" LogEnable = "Off" InterruptOnFail = "On" />
+        </Stages>
+    </Module>
+</STT>
