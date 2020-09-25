@@ -1,3 +1,5 @@
+import os
+
 from stage import Stage
 
 
@@ -26,7 +28,13 @@ class Module:
         """
         self._name = name
         self._dependencies = dependencies.copy()
+        for path in self._dependencies:
+            if not os.path.exists(path):
+                raise FileNotFoundError("Module: Directory " + path + " doesn't exist!")
         self._output_files = output_files.copy()
+        for path in self._output_files:
+            if not os.path.exists(path):
+                raise FileNotFoundError("Module: Directory " + path + " doesn't exist!")
         self._stages = []
 
     def add_stage(self, stage):

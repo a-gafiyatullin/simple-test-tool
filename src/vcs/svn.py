@@ -10,11 +10,10 @@ class SVN(VCS):
             self.log('SVN: update ERROR!')
         else:
             self.log('SVN: update SUCCESS!')
+
         return not_error
 
     def _update_directory(self, path):
         not_error = subprocess.run(['svn', 'up'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if not_error.returncode == 0:
-            return True
-        else:
-            return False
+        return True if not_error.returncode == 0 else False
+

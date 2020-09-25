@@ -1,3 +1,5 @@
+import os
+
 from stage import Stage
 import subprocess
 
@@ -25,6 +27,9 @@ class Test(Stage):
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
         self.__script_paths = script_paths.copy()
+        for path in self.__script_paths:
+            if not os.path.exists(path):
+                raise FileNotFoundError("Test: Path " + path + " doesn't exist!")
 
     def _test(self):
         for test_path in self.__script_paths:
@@ -36,7 +41,7 @@ class Test(Stage):
             self.log(test.stderr.decode('utf-8'))
 
             self.log("Test evaluated with code :" + str(test.returncode) + "\n")
-            if test.returncode != 0 and self._get_interrupt_if_fail():
+            if test.returncode != 0 and self._interrupt_if_fail:
                 return False
 
         return True

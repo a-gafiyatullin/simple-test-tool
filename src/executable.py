@@ -20,7 +20,7 @@ class Executable(ABC):
         """
         Execute the stage.
         """
-        pass
+        raise NotImplemented('Executable: exec is not implemented!')
 
     def _get_interrupt_if_fail(self):
         """

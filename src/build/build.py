@@ -1,3 +1,5 @@
+import os
+
 from stage import Stage
 from abc import ABC, abstractmethod
 
@@ -26,17 +28,19 @@ class Build(Stage, ABC):
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
         self._build_path = path
+        if not os.path.exists(self._build_path):
+            raise FileNotFoundError("Build: Directory " + path + " doesn't exists!")
 
     @abstractmethod
     def _clean(self):
         """
         Clean build directory from junk files.
         """
-        pass
+        raise NotImplemented('Build: _clean is not implemented!')
 
     @abstractmethod
     def _build(self):
         """
         Build source code.
         """
-        pass
+        raise NotImplemented('Build: _build is not implemented!')

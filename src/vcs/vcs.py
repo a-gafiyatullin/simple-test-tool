@@ -26,24 +26,29 @@ class VCS(Stage, ABC):
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
         self._vcs_paths = paths.copy()
+        for path in self._vcs_paths:
+            if not os.path.exists(path):
+                raise FileNotFoundError("VCS: Directory " + path + " doesn't exists!")
 
     @abstractmethod
     def _update_directory(self, path):
         """
         Update files in the CSV directory.
         """
-        pass
+        raise NotImplemented('VCS: _update_directory is not implemented!')
 
     def _update(self):
         """
         Update files in the CSV directories.
         """
         cwd = os.getcwd()
+
         not_error = True
         for directory in self._vcs_paths:
             os.chdir(directory)
             not_error = self._update_directory(directory)
             if self._interrupt_if_fail and not not_error:
                 break
+
         os.chdir(cwd)
         return not_error

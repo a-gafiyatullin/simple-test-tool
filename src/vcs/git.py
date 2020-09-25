@@ -10,11 +10,10 @@ class Git(VCS):
             self.log('Git: update ERROR!')
         else:
             self.log('Git: update SUCCESS!')
+
         return not_error
 
     def _update_directory(self, path):
         not_error = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if not_error.returncode == 0:
-            return True
-        else:
-            return False
+        return True if not_error.returncode == 0 else False
+
