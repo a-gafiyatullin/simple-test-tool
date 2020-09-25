@@ -1,5 +1,6 @@
 from stage import Stage
 from abc import ABC, abstractmethod
+import os
 
 
 class VCS(Stage, ABC):
@@ -27,9 +28,22 @@ class VCS(Stage, ABC):
         self._vcs_paths = paths.copy()
 
     @abstractmethod
-    def _update(self):
+    def _update_directory(self, path):
         """
-        Update file in the CSV directory.
+        Update files in the CSV directory.
         """
         pass
 
+    def _update(self):
+        """
+        Update files in the CSV directories.
+        """
+        cwd = os.getcwd()
+        not_error = True
+        for directory in self._vcs_paths:
+            os.chdir(directory)
+            not_error = self._update_directory(directory)
+            if self._interrupt_if_fail and not not_error:
+                break
+        os.chdir(cwd)
+        return not_error
