@@ -27,6 +27,8 @@ class Cmake(Build):
         os.chdir(dest_path)
 
         not_error = subprocess.run(['cmake', '..'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if not_error.returncode == 0:
+            not_error = subprocess.run(['make', 'all'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         os.chdir(cwd)
         return True if not_error.returncode == 0 else False

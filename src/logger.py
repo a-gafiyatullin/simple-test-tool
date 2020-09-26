@@ -63,7 +63,7 @@ class Logger:
         """
         return self._log_file_path
 
-    def __del__(self):
+    def close(self):
         """
         Close the log file.
         """
