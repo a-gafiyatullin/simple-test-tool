@@ -22,7 +22,9 @@
                 <Path Path = "/home/user/Module1/test/test_tool2.sh" />
             </Test>
 
-            <Notification Type = "Email" EmailTo = "example@example.com"/>
+            <Notification Type = "Email" EmailTo = "example@example.com"
+                EmailFrom = "user@example.com" SmtpServerAddress = "smtp.gmail.com" SmtpServerPort = "587"
+                Password = "12345678" />
         </Stages>
     </Module>
 
