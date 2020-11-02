@@ -13,13 +13,13 @@ class Email(Notification):
             list of loggers to send
         smtp_server_address: str
             address of smtp server
-        smtp_server_port: str
+        smtp_server_port: int
             port of smtp server
         email_from: str
             login on the smtp server
         passwd: str
             password of the smtp server
-        email_to:
+        email_to: str
             send logs to email_to
         """
         Notification.__init__(self, loggers)

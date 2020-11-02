@@ -46,3 +46,9 @@ class Stage(executable.Executable, ABC):
            a message for writing to the log file
         """
         self._logger.log(self._parent_module_name + ': ' + message)
+
+    def get_log_file_path(self):
+        """
+        Return the log file path or None
+        """
+        return self._logger.get_log_file_path()

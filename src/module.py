@@ -1,19 +1,9 @@
 import os
 
-from stage import Stage
-
 
 class Module:
     """
     Information about a module and its dependencies.
-
-
-    ...
-
-    Methods
-    -------
-    add_stage(stage)
-        add new stage for this module
     """
     def __init__(self, name, dependencies, output_files, stages):
         """
