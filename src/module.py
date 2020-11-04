@@ -21,10 +21,10 @@ class Module:
         self._name = name
         self._dependencies = dependencies.copy()
         for dependency in self._dependencies:
-            if not os.path.exists(dependency.path):
+            if not os.path.exists(dependency[1]):
                 raise FileNotFoundError("Module: Directory " + dependency.path + " doesn't exist!")
         self._output_files = output_files.copy()
         for output_file in self._output_files:
-            if not os.path.exists(output_file.path):
+            if not os.path.exists(output_file[1]):
                 raise FileNotFoundError("Module: Directory " + output_file.path + " doesn't exist!")
         self._stages = stages.copy()

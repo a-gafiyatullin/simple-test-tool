@@ -28,8 +28,9 @@ class Build(Stage, ABC):
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
         self._build_path = path
+
         if not os.path.exists(self._build_path):
-            raise FileNotFoundError("Build: Directory " + path + " doesn't exists!")
+            raise FileNotFoundError("Build: Directory " + self._build_path + " doesn't exists!")
 
     @abstractmethod
     def _clean(self):

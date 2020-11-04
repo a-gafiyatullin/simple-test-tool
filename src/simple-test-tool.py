@@ -28,6 +28,8 @@ def create_vcs_stage(stage_root, module_name):
         return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
     elif stage_type == 'SVN':
         return SVN(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+    else:
+        return None
 
 
 def create_build_stage(stage_root, module_name):
@@ -47,9 +49,11 @@ def create_build_stage(stage_root, module_name):
         return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, log_name)
     elif stage_type == 'Make':
         return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+    else:
+        return None
 
 
-def create_notification_stage(stage_root, module_name, loggers):
+def create_notification_stage(stage_root, loggers):
     stage_type = stage_root.get('Type')
 
     if stage_type == 'Email':
@@ -79,21 +83,17 @@ def create_test_stage(stage_root, module_name):
     return Test(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
 
 
-def read_outputs(module_root):
-    outputs = module_root.find('Outputs')
-
+def read_outputs(outputs_root):
     outputs_list = []
-    for output in outputs.findall('Output'):
+    for output in outputs_root.findall('Output'):
         outputs_list.append((output.get('Name'), output.get('Path')))
 
     return outputs_list
 
 
-def read_dependencies(module_root):
-    dependencies = module_root.find('Dependencies')
-
+def read_dependencies(dependencies_root):
     dependencies_list = []
-    for dependency in dependencies.findall('Dependency'):
+    for dependency in dependencies_root.findall('Dependency'):
         dependencies_list.append((dependency.get('Name'), dependency.get('Path')))
 
     return dependencies_list
@@ -127,10 +127,20 @@ def create_module(module_root):
 
     notification_stage = stages_root.find('Notification')
     if notification_stage is not None:
-        stages.append(create_notification_stage(notification_stage, module_name, log_files))
+        stages.append(create_notification_stage(notification_stage, log_files))
         print('Created Notification stage for ' + module_name + '\n')
 
-    return Module(module_name, read_dependencies(module_root), read_outputs(module_root), stages)
+    outputs_list = []
+    outputs = module_root.find('Outputs')
+    if outputs is not None:
+        outputs_list = read_outputs(outputs)
+
+    dependencies_list = []
+    dependencies = module_root.find('Dependencies')
+    if dependencies is not None:
+        dependencies_list = read_outputs(outputs)
+
+    return Module(module_name, dependencies_list, outputs_list, stages)
 
 
 def main():
