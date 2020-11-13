@@ -108,17 +108,17 @@ def create_module(module_root):
     for stage in stages_root:
         if stage.tag == 'Build':
             stages.append(create_build_stage(stage, module_name))
-            print('Created Build stage for ' + module_name + '\n')
+            print('Created Build stage for ' + module_name)
         elif stage.tag == 'VCS':
             stages.append(create_vcs_stage(stage, module_name))
-            print('Created VCS stage for ' + module_name + '\n')
+            print('Created VCS stage for ' + module_name)
         elif stage.tag == 'Test':
             stages.append(create_test_stage(stage, module_name))
-            print('Created Test stage for ' + module_name + '\n')
+            print('Created Test stage for ' + module_name)
         elif stage.tag == 'Notification':
             continue
         else:
-            print("Unrecognized " + stage.tag + ' stage!\n')
+            print("Unrecognized " + stage.tag + ' stage!')
             continue
 
         log_file = stages[-1].get_log_file_path()
@@ -128,17 +128,21 @@ def create_module(module_root):
     notification_stage = stages_root.find('Notification')
     if notification_stage is not None:
         stages.append(create_notification_stage(notification_stage, log_files))
-        print('Created Notification stage for ' + module_name + '\n')
+        print('Created Notification stage for ' + module_name)
 
     outputs_list = []
     outputs = module_root.find('Outputs')
     if outputs is not None:
+        print('Read outputs for ' + module_name)
         outputs_list = read_outputs(outputs)
 
     dependencies_list = []
     dependencies = module_root.find('Dependencies')
     if dependencies is not None:
-        dependencies_list = read_outputs(outputs)
+        print('Read dependencies for ' + module_name)
+        dependencies_list = read_dependencies(dependencies)
+
+    print('\n')
 
     return Module(module_name, dependencies_list, outputs_list, stages)
 
@@ -148,13 +152,26 @@ def main():
         print('usage: python3 simple-test-tool.py [path_to_config]')
         exit(-1)
 
-    modules = []  # array of Modules
+    modules = []  # array of Module
 
     tree = ET.parse(sys.argv[1])
     root = tree.getroot()
 
     for module in root.iter('Module'):
         modules.append(create_module(module))
+
+    topological_sorted_modules = Module.topological_sort(modules)
+    if topological_sorted_modules is not None:
+        for module in topological_sorted_modules:
+            if not module.execute_stages():
+                print('Error is occurred during stages execution! See log for more information.')
+                exit(-1)
+        print('Stages have executed successfully.')
+    else:
+        print("It seems that modules have cycle dependencies! Check the input file.")
+        exit(-1)
+
+    exit(0)
 
 
 if __name__ == '__main__':

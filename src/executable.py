@@ -4,6 +4,14 @@ from abc import ABC, abstractmethod
 class Executable(ABC):
     """
     Base class for all executable entities.
+
+
+    ...
+
+    Methods
+    -------
+    exec(message)
+        Execute the stage.
     """
 
     def __init__(self, interrupt_if_fail):

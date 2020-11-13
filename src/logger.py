@@ -13,7 +13,7 @@ class Logger:
     log(message)
         write a message to the specific log file.
     get_log_file_path()
-        return the log file path or None
+        return the log file path or None.
 
     """
 
