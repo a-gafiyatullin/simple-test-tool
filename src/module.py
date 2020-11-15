@@ -1,4 +1,5 @@
 import os
+import shutil, errno
 
 
 class Module:
@@ -16,6 +17,10 @@ class Module:
     execute_stages()
         Execute all stages for this module.
     """
+    MODULE_NAME = 0
+    DEST_PATH = 1
+    SOURCE_PATH = 2
+
     def __init__(self, name, dependencies, output_files, stages):
         """
         Parameters
@@ -23,7 +28,7 @@ class Module:
         name : str
             module name
         dependencies : list
-            list of dependencies of this module (pairs of dependency name and destination path)
+            list of dependencies of this module (array of dependency name, destination and source path)
         output_files : list
             list of output files and paths for searching them (pair of name and path)
         stages : list
@@ -32,11 +37,11 @@ class Module:
         self._name = name
         self._dependencies = dependencies.copy()
         for dependency in self._dependencies:
-            if not os.path.exists(dependency[1]):
+            if not os.path.exists(dependency[Module.DEST_PATH]):
                 raise FileNotFoundError("Module: Directory " + dependency.path + " doesn't exist!")
         self._output_files = output_files.copy()
         for output_file in self._output_files:
-            if not os.path.exists(output_file[1]):
+            if not os.path.exists(output_file[Module.DEST_PATH]):
                 raise FileNotFoundError("Module: Directory " + output_file.path + " doesn't exist!")
         self._stages = stages.copy()
 
@@ -79,8 +84,10 @@ class Module:
             i = 0
             for in_module_iter in modules:
                 for output in out_module_iter._output_files:
-                    if output in in_module_iter._dependencies:
-                        graph[i].append(j)
+                    for dependency in in_module_iter._dependencies:
+                        if output[Module.MODULE_NAME] == dependency[Module.MODULE_NAME]:
+                            graph[i].append(j)
+                            dependency[Module.SOURCE_PATH] = output[Module.DEST_PATH]
                 i = i + 1
             j = j + 1
 
@@ -101,6 +108,18 @@ class Module:
         """
         Execute all stages for this module.
         """
+        # copy dependencies
+        for dependency in self._dependencies:
+            source = dependency[Module.SOURCE_PATH] + os.sep + dependency[Module.MODULE_NAME]
+            destination = dependency[Module.DEST_PATH]
+            try:
+                shutil.copytree(source, destination)
+            except OSError as exc:
+                if exc.errno == errno.ENOTDIR:
+                    shutil.copy(source, destination)
+                else:
+                    raise
+        # execute stages
         for stage in self._stages:
             if not stage.exec():
                 return False

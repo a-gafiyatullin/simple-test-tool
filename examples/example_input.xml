@@ -1,59 +1,61 @@
 <STT>
-    <Module Name="Module1">
+    <Module Name="A">
         <Dependencies>
-            <Dependency Name = "Module2.so" Path = "Module1/" />
-            <Dependency Name = "Module3.a" Path = "Module1/" />
+            <Dependency Name = "B_file_or_dir" Path = "A/" />
+            <Dependency Name = "C_file_or_dir" Path = "A/" />
         </Dependencies>
 
         <Outputs>
-            <Output Name = "Module1.exe" Path = "Module1/" />
+            <Output Name = "A_file_or_dir" Path = "A/" />
         </Outputs>
 
         <Stages>
-            <Build Type = "CMake" Path = "Module1/" LogEnable = "On"
-                   LogName = "build.log" LogPath = "Module1/" InterruptOnFail = "On" />
+            <Build Type = "CMake" Path = "A/" LogEnable = "On" LogName = "A_build.log" LogPath = "A/" InterruptOnFail = "On" />
 
-            <VCS Type = "Git" LogEnable = "On" LogName = "vcs.log" LogPath = "Module1/" InterruptOnFail = "On">
-                <Path Path = "Module1/" />
+            <VCS Type = "Git" LogEnable = "On" LogName = "A_vcs.log" LogPath = "A/" InterruptOnFail = "On">
+                <Path Path = "A/" />
             </VCS>
 
-            <Test LogEnable = "On" LogName = "test.log" LogPath = "Module1/" InterruptOnFail = "On">
-                <Path Path = "Module1/test/test_tool1.sh" />
-                <Path Path = "Module1/test/test_tool2.sh" />
+            <Test LogEnable = "On" LogName = "A_test.log" LogPath = "A" InterruptOnFail = "On">
+                <Path Path = "A/tests/A_test_tool_1.sh" />
+                <Path Path = "A/tests/A_test_tool_2.sh" />
             </Test>
+
+            <Notification Type = "Email" EmailTo = "to@mail.com" EmailFrom = "from@mail.com"
+                          SmtpServerAddress="smtp.mail.com" SmtpServerPort="587" Password="password"/>
         </Stages>
     </Module>
 
-    <Module Name="Module2">
+    <Module Name="B">
         <Dependencies>
-            <Dependency Name = "Module3.a" Path = "Module2/" />
+            <Dependency Name = "C_file_or_dir" Path = "B/" />
         </Dependencies>
 
         <Outputs>
-            <Output Name = "Module2.so" Path = "Module2/" />
+            <Output Name = "B_file_or_dir" Path = "B/" />
         </Outputs>
 
         <Stages>
-            <Build Type = "Make" Path = "Module2/" LogEnable = "Off" InterruptOnFail = "On" />
+            <Build Type = "Make" Path = "B/" LogEnable = "Off" InterruptOnFail = "On" />
 
-            <VCS Type = "SVN" LogEnable = "On" LogName = "vcs.log" LogPath = "Module2/" InterruptOnFail = "Off">
-                <Path Path = "Module2/" />
+            <VCS Type = "SVN" LogEnable = "On" LogName = "B_vcs.log" LogPath = "B/" InterruptOnFail = "Off">
+                <Path Path = "B/" />
             </VCS>
 
             <Test LogEnable = "Off" InterruptOnFail = "On">
-                <Path Path = "Module2/test/test_tool1.sh" />
-                <Path Path = "Module2/test/test_tool2.sh" />
+                <Path Path = "B/tests/B_test_tool_1.sh" />
+                <Path Path = "b/tests/B_test_tool_2.sh" />
             </Test>
         </Stages>
     </Module>
 
-    <Module Name="Module3">
+    <Module Name="C">
         <Outputs>
-            <Output Name = "Module3.a" Path = "Module3/" />
+            <Output Name = "C_file_or_dir" Path = "C/" />
         </Outputs>
 
         <Stages>
-            <Build Type = "Make" Path = "Module3/" LogEnable = "Off" InterruptOnFail = "On" />
+            <Build Type = "Make" Path = "C/" LogEnable = "Off" InterruptOnFail = "On" />
         </Stages>
     </Module>
 </STT>

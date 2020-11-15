@@ -94,7 +94,7 @@ def read_outputs(outputs_root):
 def read_dependencies(dependencies_root):
     dependencies_list = []
     for dependency in dependencies_root.findall('Dependency'):
-        dependencies_list.append((dependency.get('Name'), dependency.get('Path')))
+        dependencies_list.append([dependency.get('Name'), dependency.get('Path'), None])
 
     return dependencies_list
 
