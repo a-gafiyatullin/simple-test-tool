@@ -69,4 +69,3 @@ class Logger:
         """
         if self._log_file is not None:
             self._log_file.close()
-

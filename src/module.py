@@ -1,5 +1,6 @@
+import errno
 import os
-import shutil, errno
+import shutil
 
 
 class Module:
