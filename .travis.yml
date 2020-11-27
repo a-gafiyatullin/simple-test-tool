@@ -1,4 +1,6 @@
 language: python
+before_install:
+  - pip3 install pytest-cov
 install: skip
 script: pytest --cov=src
 after_success: codecov
