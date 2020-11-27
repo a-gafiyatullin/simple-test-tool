@@ -1,3 +1,4 @@
 language: python
 install: skip
-script: pytest
+script: pytest --cov=src
+after_success: codecov
