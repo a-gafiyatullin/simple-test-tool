@@ -14,7 +14,7 @@ def create_vcs_stage(stage_root, module_name):
     paths = []
     for path in stage_root.findall('Path'):
         paths.append(path.get('Path'))
-    log_enable = True if stage_root.get('LogEnable') == 'True' else False
+    log_enable = True if stage_root.get('LogEnable') == 'On' else False
     log_name = ''
     log_path = ''
 
@@ -22,7 +22,7 @@ def create_vcs_stage(stage_root, module_name):
         log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
-    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'True' else False
+    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
     if stage_type == 'Git':
         return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
@@ -35,7 +35,7 @@ def create_vcs_stage(stage_root, module_name):
 def create_build_stage(stage_root, module_name):
     stage_type = stage_root.get('Type')
     stage_path = stage_root.get('Path')
-    log_enable = True if stage_root.get('LogEnable') == 'True' else False
+    log_enable = True if stage_root.get('LogEnable') == 'On' else False
     log_name = ''
     log_path = ''
 
@@ -43,7 +43,7 @@ def create_build_stage(stage_root, module_name):
         log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
-    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'True' else False
+    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
     if stage_type == 'CMake':
         return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, log_name)
@@ -70,7 +70,7 @@ def create_test_stage(stage_root, module_name):
     paths = []
     for path in stage_root.findall('Path'):
         paths.append(path.get('Path'))
-    log_enable = True if stage_root.get('LogEnable') == 'True' else False
+    log_enable = True if stage_root.get('LogEnable') == 'On' else False
     log_name = ''
     log_path = ''
 
@@ -78,7 +78,7 @@ def create_test_stage(stage_root, module_name):
         log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
-    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'True' else False
+    interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
     return Test(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
 
