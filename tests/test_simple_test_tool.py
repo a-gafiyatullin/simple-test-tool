@@ -1,5 +1,6 @@
 import simple_test_tool
 import xml.etree.ElementTree as ET
+import pytest
 
 
 def create_xml_input_file_outputs():
@@ -42,6 +43,65 @@ def create_xml_input_file_dependencies():
     return root
 
 
+def create_xml_input_file_tests():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Test stage
+    tests = ET.SubElement(stages, 'Test')
+    tests.set('LogEnable', 'Off')
+    tests.set('InterruptOnFail', 'On')
+
+    return root
+
+
+def create_xml_input_file_tests_fail():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Test stage
+    tests = ET.SubElement(stages, 'Test')
+    tests.set('LogEnable', 'Off')
+    tests.set('InterruptOnFail', 'On')
+    # create Path
+    path = ET.SubElement(tests, 'Path')
+    path.set('Path', 'TEST/')
+
+    return root
+
+
+def create_xml_input_file_log_fail():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Test stage
+    tests = ET.SubElement(stages, 'Test')
+    tests.set('LogEnable', 'On')
+    tests.set('LogName', 'TEST_test.log')
+    tests.set('LogPath', 'TEST_path')
+    tests.set('InterruptOnFail', 'On')
+
+    return root
+
+
 def test_parse_outputs():
     root = create_xml_input_file_outputs()
     module = root.find('Module')
@@ -68,3 +128,45 @@ def test_parse_dependencies():
     expected = [('Dependency1', 'DependencyDir1'), ('Dependency2', 'DependencyDir2')]
     assert len(dependencies_list) == len(expected)
     assert all([a == b] for a, b in zip(dependencies_list, expected))
+
+
+def test_create_tests_stage():
+    root = create_xml_input_file_tests()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    tests = stages.find('Test')
+
+    test_obj = simple_test_tool.create_test_stage(tests, name)
+    assert test_obj is not None
+
+
+def test_create_tests_stage_fail():
+    with pytest.raises(FileNotFoundError):
+        root = create_xml_input_file_tests_fail()
+        module = root.find('Module')
+
+        name = module.get('Name')
+        assert name == 'TEST'
+
+        stages = module.find('Stages')
+        tests = stages.find('Test')
+
+        simple_test_tool.create_test_stage(tests, name)
+
+
+def test_create_tests_log_fail():
+    with pytest.raises(FileNotFoundError):
+        root = create_xml_input_file_log_fail()
+        module = root.find('Module')
+
+        name = module.get('Name')
+        assert name == 'TEST'
+
+        stages = module.find('Stages')
+        tests = stages.find('Test')
+
+        simple_test_tool.create_test_stage(tests, name)
