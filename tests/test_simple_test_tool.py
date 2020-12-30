@@ -116,7 +116,7 @@ def create_xml_input_file_cmake():
     # create Build stage
     build = ET.SubElement(stages, 'Build')
     build.set('Type', 'CMake')
-    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    build.set('Path', os.getcwd() + os.sep + 'Cmake-build-test')
     build.set('LogEnable', 'Off')
     build.set('InterruptOnFail', 'On')
 
@@ -136,7 +136,7 @@ def create_xml_input_file_make():
     # create Build stage
     build = ET.SubElement(stages, 'Build')
     build.set('Type', 'Make')
-    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    build.set('Path', os.getcwd() + os.sep + 'Cmake-build-test')
     build.set('LogEnable', 'Off')
     build.set('InterruptOnFail', 'On')
 
@@ -227,8 +227,7 @@ def test_cmake_build_stage():
     assert build_obj is not None
 
     build_obj.exec()
-    assert os.path.exists(
-        os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build/CMake-build-test-exec') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'Cmake-build-test/build/CMake-build-test-exec') is True
 
 
 def test_make_build_stage():
@@ -245,4 +244,4 @@ def test_make_build_stage():
     assert build_obj is not None
 
     build_obj.exec()
-    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/make-build-test-exec') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'Cmake-build-test/make-build-test-exec') is True
