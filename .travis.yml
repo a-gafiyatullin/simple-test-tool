@@ -1,8 +1,17 @@
 language: python
+
+addons:
+  apt:
+    packages:
+      - cmake
+
 before_install:
   - pip3 install pytest-cov
   - pip3 install codecov
   - pip3 install python-telegram-bot
+
 install: skip
+
 script: pytest --cov=src
+
 after_success: codecov
