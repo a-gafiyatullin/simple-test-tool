@@ -1,6 +1,7 @@
 import simple_test_tool
 import xml.etree.ElementTree as ET
 import pytest
+import os
 
 
 def create_xml_input_file_outputs():
@@ -102,6 +103,46 @@ def create_xml_input_file_log_fail():
     return root
 
 
+def create_xml_input_file_cmake():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Build stage
+    build = ET.SubElement(stages, 'Build')
+    build.set('Type', 'CMake')
+    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    build.set('LogEnable', 'Off')
+    build.set('InterruptOnFail', 'On')
+
+    return root
+
+
+def create_xml_input_file_make():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Build stage
+    build = ET.SubElement(stages, 'Build')
+    build.set('Type', 'Make')
+    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    build.set('LogEnable', 'Off')
+    build.set('InterruptOnFail', 'On')
+
+    return root
+
+
 def test_parse_outputs():
     root = create_xml_input_file_outputs()
     module = root.find('Module')
@@ -170,3 +211,38 @@ def test_create_tests_log_fail():
         tests = stages.find('Test')
 
         simple_test_tool.create_test_stage(tests, name)
+
+
+def test_cmake_build_stage():
+    root = create_xml_input_file_cmake()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    build = stages.find('Build')
+
+    build_obj = simple_test_tool.create_build_stage(build, name)
+    assert build_obj is not None
+
+    build_obj.exec()
+    assert os.path.exists(
+        os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build/CMake-build-test-exec') is True
+
+
+def test_make_build_stage():
+    root = create_xml_input_file_make()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    build = stages.find('Build')
+
+    build_obj = simple_test_tool.create_build_stage(build, name)
+    assert build_obj is not None
+
+    build_obj.exec()
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/make-build-test-exec') is True

@@ -35,12 +35,12 @@ class Test(Stage):
         for test_path in self.__script_paths:
             test = subprocess.run(test_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            self.log("Test " + test_path + "\nStdout:\n:")
+            self.log("Test " + test_path + "\nStdout:")
             self.log(test.stdout.decode('utf-8'))
-            self.log("Stderr:\n:")
+            self.log("Stderr:")
             self.log(test.stderr.decode('utf-8'))
 
-            self.log("Test evaluated with code :" + str(test.returncode) + "\n")
+            self.log("Test evaluated with code :" + str(test.returncode))
             if test.returncode != 0 and self._interrupt_if_fail:
                 return False
 

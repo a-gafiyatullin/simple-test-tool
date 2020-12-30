@@ -31,7 +31,7 @@ class Cmake(Build):
 
     def exec(self):
         self._clean()
-        self.log('Cmake: clean.')
+        self.log('Cmake: clean!')
 
         not_error = self._build()
         if not not_error:

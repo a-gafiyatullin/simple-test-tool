@@ -1,3 +1,5 @@
 .idea
 __pycache__
 .pytest_cache
+tests/Cmake-build-test/build
+tests/Cmake-build-test/make-build-test-exec

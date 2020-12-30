@@ -29,4 +29,3 @@ class Telegram(Notification):
                 bot.sendMessage(chat_id=self.chat_id, text=text[x:x + Telegram.MESSAGE_MAX_LEN])
         else:
             bot.sendMessage(chat_id=self.chat_id, text=text)
-

@@ -55,7 +55,7 @@ class Logger:
            a message for writing to the log file
         """
         if self._log_file is not None:
-            self._log_file.write(message)
+            self._log_file.write(message + '\n')
 
     def get_log_file_path(self):
         """

@@ -23,12 +23,9 @@ class Make(Build):
         return True if not_error.returncode == 0 else False
 
     def exec(self):
-        not_error = self._clean()
-        if not not_error:
-            self.log('Make: clean ERROR!')
-            return False
-        else:
-            self.log('Make: clean SUCCESS!')
+        self._clean()
+        self.log('Make: clean!')
+
         not_error = self._build()
         if not not_error:
             self.log('Make: build ERROR!')
