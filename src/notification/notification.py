@@ -15,9 +15,7 @@ class Notification(Stage, ABC):
             list of loggers to send
         """
         Stage.__init__(self, "", False, "", "", False)
-        self._loggers = loggers.copy()
-        for logger in self._loggers:
-            logger.close()
+        self._loggers = loggers
 
     @abstractmethod
     def _send(self, text):

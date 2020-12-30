@@ -2,6 +2,7 @@ from build.cmake import Cmake
 from build.make import Make
 from module import Module
 from notification.mail import Email
+from notification.telegram_bot import Telegram
 from test import Test
 from vcs.git import Git
 from vcs.svn import SVN
@@ -64,6 +65,13 @@ def create_notification_stage(stage_root, loggers):
         password = stage_root.get('Password')
 
         return Email(loggers, smtp_ip, int(smtp_port), email_from, password, email_to)
+    elif stage_type == 'Telegram':
+        token = stage_root.get('Token')
+        chat_id = stage_root.get('ChatID')
+
+        return Telegram(loggers, token, chat_id)
+    else:
+        return None
 
 
 def create_test_stage(stage_root, module_name):
@@ -103,7 +111,7 @@ def create_module(module_root):
     module_name = module_root.get('Name')
 
     stages = []  # array of stages
-    log_files = []  # array of the log files paths
+    loggers = []  # array of the loggers
     stages_root = module_root.find('Stages')
     for stage in stages_root:
         if stage.tag == 'Build':
@@ -121,13 +129,13 @@ def create_module(module_root):
             print("Unrecognized " + stage.tag + ' stage!')
             continue
 
-        log_file = stages[-1].get_log_file_path()
-        if log_file is not None:
-            log_files.append(log_file)
+        logger = stages[-1].get_logger()
+        if logger is not None:
+            loggers.append(logger)
 
     notification_stage = stages_root.find('Notification')
     if notification_stage is not None:
-        stages.append(create_notification_stage(notification_stage, log_files))
+        stages.append(create_notification_stage(notification_stage, loggers))
         print('Created Notification stage for ' + module_name)
 
     outputs_list = []

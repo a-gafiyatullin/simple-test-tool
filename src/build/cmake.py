@@ -8,18 +8,14 @@ class Cmake(Build):
 
     def _clean(self):
         dest_path = self._build_path + os.sep + self._build_dir
-        if os.path.exists(dest_path):
-            cwd = os.getcwd()
-            os.chdir(dest_path)
+        subprocess.run(['rm', '-rf', dest_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            not_error = subprocess.run(['rm', '-rf', dest_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if not_error.returncode == 0:
-                os.mkdir(dest_path)
+        cwd = os.getcwd()
+        os.chdir(self._build_path)
+        os.mkdir(dest_path)
+        os.chdir(cwd)
 
-            os.chdir(cwd)
-            return True if not_error.returncode == 0 else False
-        else:
-            return False
+        return True
 
     def _build(self):
         dest_path = self._build_path + os.sep + self._build_dir
@@ -34,12 +30,9 @@ class Cmake(Build):
         return True if not_error.returncode == 0 else False
 
     def exec(self):
-        not_error = self._clean()
-        if not not_error:
-            self.log('Cmake: clean ERROR!')
-            return False
-        else:
-            self.log('Cmake: clean SUCCESS!')
+        self._clean()
+        self.log('Cmake: clean.')
+
         not_error = self._build()
         if not not_error:
             self.log('Cmake: build ERROR!')

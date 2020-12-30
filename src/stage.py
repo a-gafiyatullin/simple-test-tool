@@ -47,8 +47,8 @@ class Stage(executable.Executable, ABC):
         """
         self._logger.log(self._parent_module_name + ': ' + message)
 
-    def get_log_file_path(self):
+    def get_logger(self):
         """
-        Return the log file path or None
+        Return the logger
         """
-        return self._logger.get_log_file_path()
+        return self._logger
