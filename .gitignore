@@ -2,4 +2,6 @@
 __pycache__
 .pytest_cache
 tests/Cmake-build-test/build
-tests/Cmake-build-test/make-build-test-exec
+tests/Make-build-test/make-build-test-exec
+tests/Make-build-test/CMake-build-test-exec
+tests/VCS-test/simple-test-tool

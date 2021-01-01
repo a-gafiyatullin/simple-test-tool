@@ -4,6 +4,8 @@ import pytest
 import os
 import subprocess
 
+from module import Module
+
 
 def create_xml_input_file_outputs():
     # create root
@@ -137,7 +139,7 @@ def create_xml_input_file_make():
     # create Build stage
     build = ET.SubElement(stages, 'Build')
     build.set('Type', 'Make')
-    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
     build.set('LogEnable', 'Off')
     build.set('InterruptOnFail', 'On')
 
@@ -177,6 +179,51 @@ def create_xml_input_file_git_and_test():
 
     test_path = ET.SubElement(test, 'Path')
     test_path.set('Path', root_dir + 'test.sh')
+
+    return root
+
+
+def create_xml_input_file_modules():
+    # create root
+    root = ET.Element('STT')
+
+    # create Cmake Module
+    cmake_module = ET.SubElement(root, 'Module')
+    cmake_module.set('Name', 'Cmake-build-test')
+
+    # create Stages
+    cmake_stages = ET.SubElement(cmake_module, 'Stages')
+    # create Build stage
+    cmake_build = ET.SubElement(cmake_stages, 'Build')
+    cmake_build.set('Type', 'CMake')
+    cmake_build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test')
+    cmake_build.set('LogEnable', 'Off')
+    cmake_build.set('InterruptOnFail', 'On')
+
+    # create Outputs
+    cmake_outputs = ET.SubElement(cmake_module, 'Outputs')
+    cmake_output = ET.SubElement(cmake_outputs, 'Output')
+    cmake_output.set('Name', 'CMake-build-test-exec')
+    cmake_output.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build')
+
+    # create Make Module
+    make_module = ET.SubElement(root, 'Module')
+    make_module.set('Name', 'Make-build-test')
+
+    # create Stages
+    make_stages = ET.SubElement(make_module, 'Stages')
+    # create Build stage
+    make_build = ET.SubElement(make_stages, 'Build')
+    make_build.set('Type', 'Make')
+    make_build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
+    make_build.set('LogEnable', 'Off')
+    make_build.set('InterruptOnFail', 'On')
+
+    # create Dependencies
+    make_dependencies = ET.SubElement(make_module, 'Dependencies')
+    make_dependency = ET.SubElement(make_dependencies, 'Dependency')
+    make_dependency.set('Name', 'CMake-build-test-exec')
+    make_dependency.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
 
     return root
 
@@ -283,7 +330,7 @@ def test_make_build_stage():
     assert build_obj is not None
 
     build_obj.exec()
-    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/make-build-test-exec') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
 
 
 def test_git_vcs_and_test_stage():
@@ -308,3 +355,23 @@ def test_git_vcs_and_test_stage():
     assert test_obj is not None
 
     test_obj.exec()
+
+
+def test_create_module():
+    root = create_xml_input_file_modules()
+
+    modules = []  # array of Module
+
+    for module in root.iter('Module'):
+        modules.append(simple_test_tool.create_module(module))
+        assert modules[-1] is not None
+
+    topological_sorted_modules = Module.topological_sort(modules)
+    assert topological_sorted_modules is not None
+
+    topological_sorted_modules[0].execute_stages()
+    assert os.path.exists(
+        os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/CMake-build-test-exec') is True
+
+    topological_sorted_modules[1].execute_stages()
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True

@@ -22,7 +22,7 @@ class Notification(Stage, ABC):
         """
         Send the information from logs.
         """
-        pass
+        raise NotImplemented('Notification: _send is not implemented!')
 
     def exec(self):
         text = ""
