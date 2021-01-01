@@ -2,6 +2,7 @@ import simple_test_tool
 import xml.etree.ElementTree as ET
 import pytest
 import os
+import subprocess
 
 
 def create_xml_input_file_outputs():
@@ -143,6 +144,43 @@ def create_xml_input_file_make():
     return root
 
 
+def create_xml_input_file_git_and_test():
+    # clone repository
+    root_dir = os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test' + os.sep
+    curr_dir = os.getcwd()
+    os.chdir(root_dir)
+    subprocess.run(root_dir + 'prepare.sh', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    os.chdir(curr_dir)
+
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create VCS stage
+    vcs = ET.SubElement(stages, 'VCS')
+    vcs.set('Type', 'Git')
+    vcs.set('LogEnable', 'Off')
+    vcs.set('InterruptOnFail', 'On')
+
+    vcs_path = ET.SubElement(vcs, 'Path')
+    vcs_path.set('Path', root_dir + 'simple-test-tool')
+
+    # create Test stage
+    test = ET.SubElement(stages, 'Test')
+    test.set('LogEnable', 'Off')
+    test.set('InterruptOnFail', 'On')
+
+    test_path = ET.SubElement(test, 'Path')
+    test_path.set('Path', root_dir + 'test.sh')
+
+    return root
+
+
 def test_parse_outputs():
     root = create_xml_input_file_outputs()
     module = root.find('Module')
@@ -246,3 +284,27 @@ def test_make_build_stage():
 
     build_obj.exec()
     assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/make-build-test-exec') is True
+
+
+def test_git_vcs_and_test_stage():
+    root = create_xml_input_file_git_and_test()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    vcs = stages.find('VCS')
+
+    vcs_obj = simple_test_tool.create_vcs_stage(vcs, name)
+    assert vcs_obj is not None
+
+    vcs_obj.exec()
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test/simple-test-tool') is True
+
+    test = stages.find('Test')
+
+    test_obj = simple_test_tool.create_test_stage(test, name)
+    assert test_obj is not None
+
+    test_obj.exec()
