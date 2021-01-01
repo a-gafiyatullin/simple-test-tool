@@ -228,6 +228,30 @@ def create_xml_input_file_modules():
     return root
 
 
+def create_xml_input_file_log_exception():
+    make_dir = os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test'
+
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Build stage
+    build = ET.SubElement(stages, 'Build')
+    build.set('Type', 'Make')
+    build.set('Path', make_dir)
+    build.set('LogEnable', 'On')
+    build.set('LogName', 'make_build_log.log')
+    build.set('LogPath', make_dir)
+    build.set('InterruptOnFail', 'On')
+
+    return root
+
+
 def test_parse_outputs():
     root = create_xml_input_file_outputs()
     module = root.find('Module')
@@ -375,3 +399,17 @@ def test_create_module():
 
     topological_sorted_modules[1].execute_stages()
     assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
+
+
+def test_log_exception():
+    with pytest.raises(FileExistsError):
+        root = create_xml_input_file_log_exception()
+        module = root.find('Module')
+
+        name = module.get('Name')
+        assert name == 'TEST'
+
+        stages = module.find('Stages')
+        tests = stages.find('Build')
+
+        simple_test_tool.create_build_stage(tests, name)
