@@ -245,7 +245,7 @@ def create_xml_input_file_log_exception():
     build.set('Type', 'Make')
     build.set('Path', make_dir)
     build.set('LogEnable', 'On')
-    build.set('LogName', 'make_build_log.log')
+    build.set('LogName', 'make_build_log.txt')
     build.set('LogPath', make_dir)
     build.set('InterruptOnFail', 'On')
 
