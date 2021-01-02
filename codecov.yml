@@ -2,3 +2,4 @@ ignore:
   - "src/notification"
   - "src/vcs/svn.py"
   - "src/executable.py"
+  - "src/build/build.py"

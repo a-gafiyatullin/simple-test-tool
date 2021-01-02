@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 import pytest
 import os
 import subprocess
-
 from module import Module
 
 
@@ -401,15 +400,9 @@ def test_create_module():
     assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
 
 
-def test_log_exception():
-    with pytest.raises(FileExistsError):
-        root = create_xml_input_file_log_exception()
-        module = root.find('Module')
+def test_input_test_xml():
+    base_dir = os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test' + os.sep
+    simple_test_tool.main('tests' + os.sep + 'input_test.xml')
 
-        name = module.get('Name')
-        assert name == 'TEST'
-
-        stages = module.find('Stages')
-        tests = stages.find('Build')
-
-        simple_test_tool.create_build_stage(tests, name)
+    assert os.path.exists(base_dir + 'make-build-test-exec') is True
+    assert os.path.exists(base_dir + 'Make_build.log') is True

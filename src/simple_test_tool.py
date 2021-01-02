@@ -155,14 +155,10 @@ def create_module(module_root):
     return Module(module_name, dependencies_list, outputs_list, stages)
 
 
-def main():
-    if len(sys.argv) < 2:
-        print('usage: python3 simple-test-tool.py [path_to_config]')
-        exit(-1)
-
+def main(input_file):
     modules = []  # array of Module
 
-    tree = ET.parse(sys.argv[1])
+    tree = ET.parse(input_file)
     root = tree.getroot()
 
     for module in root.iter('Module'):
@@ -179,8 +175,12 @@ def main():
         print("It seems that modules have cycle dependencies! Check the input file.")
         exit(-1)
 
-    exit(0)
-
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        print('usage: python3 simple-test-tool.py [path_to_config]')
+        exit(-1)
+
+    main(sys.argv[1])
+
+    exit(0)

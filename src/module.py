@@ -124,3 +124,6 @@ class Module:
         for stage in self._stages:
             if not stage.exec():
                 return False
+
+        return True
+

@@ -37,8 +37,9 @@ class Logger:
                     log_file_dir += os.sep
                 self._log_file_path = log_file_dir + log_name
                 if os.path.exists(self._log_file_path):
-                    raise FileExistsError("Logger: File " + log_name + " already exist!")
-                self._log_file = open(self._log_file_path, 'w')
+                    self._log_file = open(self._log_file_path, 'a')
+                else:
+                    self._log_file = open(self._log_file_path, 'w')
             else:
                 raise FileNotFoundError("Logger: Directory " + log_file_dir + " doesn't exist!")
         else:
