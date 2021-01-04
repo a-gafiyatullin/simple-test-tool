@@ -10,13 +10,13 @@
         </Outputs>
 
         <Stages>
-            <Build Type = "CMake" Path = "A/" LogEnable = "On" LogName = "A_build.log" LogPath = "A/" InterruptOnFail = "On" />
+            <Build Type = "CMake" Path = "A/" LogEnable = "On" LogPath = "A/" InterruptOnFail = "On" />
 
-            <VCS Type = "Git" LogEnable = "On" LogName = "A_vcs.log" LogPath = "A/" InterruptOnFail = "On">
+            <VCS Type = "Git" LogEnable = "On" LogPath = "A/" InterruptOnFail = "On">
                 <Path Path = "A/" />
             </VCS>
 
-            <Test LogEnable = "On" LogName = "A_test.log" LogPath = "A" InterruptOnFail = "On">
+            <Test LogEnable = "On" LogPath = "A" InterruptOnFail = "On">
                 <Path Path = "A/tests/A_test_tool_1.sh" />
                 <Path Path = "A/tests/A_test_tool_2.sh" />
             </Test>
@@ -38,7 +38,7 @@
         <Stages>
             <Build Type = "Make" Path = "B/" LogEnable = "Off" InterruptOnFail = "On" />
 
-            <VCS Type = "SVN" LogEnable = "On" LogName = "B_vcs.log" LogPath = "B/" InterruptOnFail = "Off">
+            <VCS Type = "SVN" LogEnable = "On" LogPath = "B/" InterruptOnFail = "Off">
                 <Path Path = "B/" />
             </VCS>
 

@@ -22,6 +22,13 @@ class Module:
     DEST_PATH = 1
     SOURCE_PATH = 2
 
+    VCS_STAGE = 0
+    BUILD_STAGE = 1
+    TEST_STAGE = 2
+    COMMIT_STAGE = 3
+    NOTIFICATION_STAGE = 4
+    STAGES_NUM = 5
+
     def __init__(self, name, dependencies, output_files, stages):
         """
         Parameters
@@ -36,12 +43,12 @@ class Module:
             list of stages
         """
         self._name = name
-        self._dependencies = dependencies.copy()
-        for dependency in self._dependencies:
+        self.dependencies = dependencies.copy()
+        for dependency in self.dependencies:
             if not os.path.exists(dependency[Module.DEST_PATH]):
                 raise FileNotFoundError("Module: Directory " + dependency.path + " doesn't exist!")
-        self._output_files = output_files.copy()
-        for output_file in self._output_files:
+        self.output_files = output_files.copy()
+        for output_file in self.output_files:
             if not os.path.exists(output_file[Module.DEST_PATH]):
                 raise FileNotFoundError("Module: Directory " + output_file.path + " doesn't exist!")
         self._stages = stages.copy()
@@ -84,8 +91,8 @@ class Module:
         for out_module_iter in modules:
             i = 0
             for in_module_iter in modules:
-                for output in out_module_iter._output_files:
-                    for dependency in in_module_iter._dependencies:
+                for output in out_module_iter.output_files:
+                    for dependency in in_module_iter.dependencies:
                         if output[Module.MODULE_NAME] == dependency[Module.MODULE_NAME]:
                             graph[i].append(j)
                             dependency[Module.SOURCE_PATH] = output[Module.DEST_PATH]
@@ -110,9 +117,18 @@ class Module:
         Execute all stages for this module.
         """
         # copy dependencies
-        for dependency in self._dependencies:
+        for dependency in self.dependencies:
             source = dependency[Module.SOURCE_PATH] + os.sep + dependency[Module.MODULE_NAME]
             destination = dependency[Module.DEST_PATH]
+            if self._stages[Module.COMMIT_STAGE] is not None:
+                if os.path.exists(source) and os.path.exists(destination + os.sep + dependency[Module.MODULE_NAME]):
+                    if self._stages[Module.COMMIT_STAGE].diff(source,
+                                                              destination + os.sep + dependency[Module.MODULE_NAME]):
+                        result = self._stages[Module.COMMIT_STAGE].get_vcs_obj().add_for_commit(
+                            dependency[Module.DEST_PATH], dependency[Module.MODULE_NAME])
+                        if not result:
+                            return False
+
             try:
                 shutil.copytree(source, destination)
             except OSError as exc:
@@ -120,10 +136,32 @@ class Module:
                     shutil.copy(source, destination)
                 else:
                     raise
+
         # execute stages
-        for stage in self._stages:
-            if not stage.exec():
+
+        if self._stages[Module.VCS_STAGE] is not None:
+            if not self._stages[Module.VCS_STAGE].exec():
+                return False
+
+        if self._stages[Module.BUILD_STAGE] is not None:
+            if not self._stages[Module.BUILD_STAGE].exec():
+                return False
+
+        if self._stages[Module.COMMIT_STAGE] is not None:
+            for output in self.output_files:
+                self._stages[Module.COMMIT_STAGE].get_vcs_obj().add_for_commit(output[Module.DEST_PATH],
+                                                                               output[Module.MODULE_NAME])
+
+        if self._stages[Module.TEST_STAGE] is not None:
+            if not self._stages[Module.TEST_STAGE].exec():
+                return False
+
+        if self._stages[Module.COMMIT_STAGE] is not None:
+            if not self._stages[Module.COMMIT_STAGE].exec():
+                return False
+
+        if self._stages[Module.NOTIFICATION_STAGE] is not None:
+            if not self._stages[Module.NOTIFICATION_STAGE].exec():
                 return False
 
         return True
-

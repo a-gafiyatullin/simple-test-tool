@@ -4,6 +4,7 @@ import os
 
 
 class Make(Build):
+
     def _clean(self):
         cwd = os.getcwd()
         os.chdir(self._build_path)
@@ -11,7 +12,12 @@ class Make(Build):
         not_error = subprocess.run(['make', 'clean'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         os.chdir(cwd)
-        return True if not_error.returncode == 0 else False
+
+        self.log('clean!')
+        if not_error.returncode == 0:
+            return True
+        else:
+            return not self._get_interrupt_if_fail()
 
     def _build(self):
         cwd = os.getcwd()
@@ -20,17 +26,9 @@ class Make(Build):
         not_error = subprocess.run(['make', 'all'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         os.chdir(cwd)
-        return True if not_error.returncode == 0 else False
-
-    def exec(self):
-        self._clean()
-        self.log('Make: clean!')
-
-        not_error = self._build()
-        if not not_error:
-            self.log('Make: build ERROR!')
-            return False
+        if not_error.returncode == 0:
+            self.log('build SUCCESS!')
+            return True
         else:
-            self.log('Make: build SUCCESS!')
-
-        return True
+            self.log('build ERROR!')
+            return not self._get_interrupt_if_fail()

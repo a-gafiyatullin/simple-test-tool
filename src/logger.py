@@ -1,7 +1,9 @@
 import os
+from datetime import date
 
 
 class Logger:
+    latest_log_symlink = 'latest-log.txt'
     """
     Base class for all entities with the logging feature.
 
@@ -17,17 +19,18 @@ class Logger:
 
     """
 
-    def __init__(self, log_file_dir, log_name, is_logging):
+    def __init__(self, log_file_dir, stage_name, is_logging):
         """
         Parameters
         ----------
         log_file_dir : str
             an absolute path to directory for the log file
-        log_name : str
-            a name of the log file
+        stage_name : str
+            stage name
         is_logging : bool
             write messages to the log file or not
         """
+        log_name = str(date.today()) + '-' + stage_name + '.txt'
 
         self._is_logging = is_logging
 

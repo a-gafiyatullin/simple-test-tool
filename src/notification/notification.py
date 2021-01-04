@@ -7,6 +7,7 @@ class Notification(Stage, ABC):
     """
     Base class for all notification system.
     """
+
     def __init__(self, loggers):
         """
         Parameters

@@ -5,4 +5,4 @@ tests/Cmake-build-test/build
 tests/Make-build-test/make-build-test-exec
 tests/Make-build-test/CMake-build-test-exec
 tests/VCS-test/simple-test-tool
-tests/Make-build-test/Make_build.log
+tests/Make-build-test/*.txt

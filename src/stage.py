@@ -17,14 +17,14 @@ class Stage(executable.Executable, ABC):
 
     """
 
-    def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging):
+    def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging):
         """
         Parameters
         ----------
         log_file_path : str
             an absolute path to directory for the log file
-        log_name : str
-            a name of the log file
+        stage_name : str
+            stage name
         is_logging : bool
             write messages to the log file or not
         interrupt_if_fail : bool
@@ -33,8 +33,9 @@ class Stage(executable.Executable, ABC):
             a parent module name
         """
         executable.Executable.__init__(self, interrupt_if_fail)
-        self._logger = logger.Logger(log_file_path, log_name, is_logging)
+        self._logger = logger.Logger(log_file_path, stage_name, is_logging)
         self._parent_module_name = parent_module_name
+        self._stage_name = stage_name
 
     def log(self, message):
         """
@@ -45,7 +46,7 @@ class Stage(executable.Executable, ABC):
         message : str
            a message for writing to the log file
         """
-        self._logger.log(self._parent_module_name + ': ' + message)
+        self._logger.log(self._parent_module_name + '.' + self._stage_name + ': ' + message)
 
     def get_logger(self):
         """

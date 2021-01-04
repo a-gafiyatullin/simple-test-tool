@@ -9,12 +9,12 @@ class Build(Stage, ABC):
     Base class for all building systems.
     """
 
-    def __init__(self, path, parent_module_name, interrupt_if_fail, is_logging, log_file_path, log_name):
+    def __init__(self, path, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name):
         """
         Parameters
         ----------
         path : str
-            an absolute path to directory with build file(Makefile and etc)
+            a path to directory with build file(Makefile and etc)
         parent_module_name: str
             a parent module name
         interrupt_if_fail : bool
@@ -22,11 +22,11 @@ class Build(Stage, ABC):
         is_logging : bool
             write messages to the log file or not
         log_file_path : str
-            an absolute path to directory for the log file
-        log_name : str
-            a name of the log file
+            a path to directory for the log file
+        stage_name : str
+            stage name
         """
-        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
+        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging)
         self._build_path = path
 
         if not os.path.exists(self._build_path):
@@ -45,3 +45,8 @@ class Build(Stage, ABC):
         Build source code.
         """
         raise NotImplemented('Build: _build is not implemented!')
+
+    def exec(self):
+        self._clean()
+
+        return self._build()

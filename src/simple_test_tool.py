@@ -4,6 +4,7 @@ from module import Module
 from notification.mail import Email
 from notification.telegram_bot import Telegram
 from test import Test
+from vcs.commit import Commit
 from vcs.git import Git
 from vcs.svn import SVN
 import xml.etree.ElementTree as ET
@@ -16,40 +17,57 @@ def create_vcs_stage(stage_root, module_name):
     for path in stage_root.findall('Path'):
         paths.append(path.get('Path'))
     log_enable = True if stage_root.get('LogEnable') == 'On' else False
-    log_name = ''
     log_path = ''
 
     if log_enable:
-        log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
     if stage_type == 'Git':
-        return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+        return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, 'Git')
     elif stage_type == 'SVN':
-        return SVN(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+        return SVN(paths, module_name, interrupt_on_fail, log_enable, log_path, 'SVN')
     else:
         return None
+
+
+def create_commit_stage(stage_root, module_name):
+    stage_type = stage_root.get('Type')
+    paths = []
+    for path in stage_root.findall('Path'):
+        paths.append(path.get('Path'))
+    log_enable = True if stage_root.get('LogEnable') == 'On' else False
+    auto_commit_and_push = True if stage_root.get('AutoCommitAndPush') == 'On' else False
+    log_path = ''
+
+    if log_enable:
+        log_path = stage_root.get('LogPath')
+
+    vcs_obj = None
+    if stage_type == 'Git':
+        vcs_obj = Git(paths, module_name, False, log_enable, log_path, 'Git-Commit')
+    elif stage_type == 'SVN':
+        vcs_obj = SVN(paths, module_name, False, log_enable, log_path, 'SVN-Commit')
+
+    return Commit(auto_commit_and_push, module_name, log_enable, log_path, vcs_obj)
 
 
 def create_build_stage(stage_root, module_name):
     stage_type = stage_root.get('Type')
     stage_path = stage_root.get('Path')
     log_enable = True if stage_root.get('LogEnable') == 'On' else False
-    log_name = ''
     log_path = ''
 
     if log_enable:
-        log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
     if stage_type == 'CMake':
-        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake')
     elif stage_type == 'Make':
-        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make')
     else:
         return None
 
@@ -79,16 +97,14 @@ def create_test_stage(stage_root, module_name):
     for path in stage_root.findall('Path'):
         paths.append(path.get('Path'))
     log_enable = True if stage_root.get('LogEnable') == 'On' else False
-    log_name = ''
     log_path = ''
 
     if log_enable:
-        log_name = stage_root.get('LogName')
         log_path = stage_root.get('LogPath')
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
-    return Test(paths, module_name, interrupt_on_fail, log_enable, log_path, log_name)
+    return Test(paths, module_name, interrupt_on_fail, log_enable, log_path)
 
 
 def read_outputs(outputs_root):
@@ -110,26 +126,34 @@ def read_dependencies(dependencies_root):
 def create_module(module_root):
     module_name = module_root.get('Name')
 
-    stages = []  # array of stages
+    stages = [None] * Module.STAGES_NUM  # array of stages
     loggers = []  # array of the loggers
     stages_root = module_root.find('Stages')
     for stage in stages_root:
         if stage.tag == 'Build':
-            stages.append(create_build_stage(stage, module_name))
+            stages[Module.BUILD_STAGE] = create_build_stage(stage, module_name)
+            i = Module.BUILD_STAGE
             print('Created Build stage for ' + module_name)
         elif stage.tag == 'VCS':
-            stages.append(create_vcs_stage(stage, module_name))
+            stages[Module.VCS_STAGE] = create_vcs_stage(stage, module_name)
+            i = Module.VCS_STAGE
             print('Created VCS stage for ' + module_name)
         elif stage.tag == 'Test':
-            stages.append(create_test_stage(stage, module_name))
+            stages[Module.TEST_STAGE] = create_test_stage(stage, module_name)
+            i = Module.TEST_STAGE
             print('Created Test stage for ' + module_name)
+        elif stage.tag == 'Commit':
+            stages[Module.COMMIT_STAGE] = create_commit_stage(stage, module_name)
+            i = Module.COMMIT_STAGE
+            loggers.append(stages[Module.COMMIT_STAGE].get_vcs_obj().get_logger())
+            print('Created Commit stage for ' + module_name)
         elif stage.tag == 'Notification':
             continue
         else:
             print("Unrecognized " + stage.tag + ' stage!')
             continue
 
-        logger = stages[-1].get_logger()
+        logger = stages[i].get_logger()
         if logger is not None:
             loggers.append(logger)
 

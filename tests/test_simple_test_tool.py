@@ -1,3 +1,4 @@
+from datetime import date
 import simple_test_tool
 import xml.etree.ElementTree as ET
 import pytest
@@ -98,7 +99,6 @@ def create_xml_input_file_log_fail():
     # create Test stage
     tests = ET.SubElement(stages, 'Test')
     tests.set('LogEnable', 'On')
-    tests.set('LogName', 'TEST_test.log')
     tests.set('LogPath', 'TEST_path')
     tests.set('InterruptOnFail', 'On')
 
@@ -244,7 +244,6 @@ def create_xml_input_file_log_exception():
     build.set('Type', 'Make')
     build.set('Path', make_dir)
     build.set('LogEnable', 'On')
-    build.set('LogName', 'make_build_log.txt')
     build.set('LogPath', make_dir)
     build.set('InterruptOnFail', 'On')
 
@@ -405,4 +404,4 @@ def test_input_test_xml():
     simple_test_tool.main('tests' + os.sep + 'input_test.xml')
 
     assert os.path.exists(base_dir + 'make-build-test-exec') is True
-    assert os.path.exists(base_dir + 'Make_build.log') is True
+    assert os.path.exists(base_dir + str(date.today()) + '-Make.txt') is True

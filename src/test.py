@@ -8,7 +8,7 @@ class Test(Stage):
     """
     Class that containing and operating tests.
     """
-    def __init__(self, script_paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, log_name):
+    def __init__(self, script_paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path):
         """
         Parameters
         ----------
@@ -22,10 +22,8 @@ class Test(Stage):
             write messages to the log file or not
         log_file_path : str
             an absolute path to directory for the log file
-        log_name : str
-            a name of the log file
         """
-        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
+        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, 'Test', is_logging)
         self.__script_paths = script_paths.copy()
         for path in self.__script_paths:
             if not os.path.exists(path):

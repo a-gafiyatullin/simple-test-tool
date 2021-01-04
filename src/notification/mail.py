@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 
 
 class Email(Notification):
+
     def __init__(self, loggers, smtp_server_address, smtp_server_port, email_from, passwd, email_to):
         """
         Parameters

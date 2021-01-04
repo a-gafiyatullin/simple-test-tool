@@ -7,12 +7,13 @@ class VCS(Stage, ABC):
     """
     Base class for all CSV systems.
     """
-    def __init__(self, paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, log_name):
+
+    def __init__(self, paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name):
         """
         Parameters
         ----------
         paths : list
-            an absolute paths to directories with CSV systems
+            paths to directories with CSV systems
         parent_module_name: str
             a parent module name
         interrupt_if_fail : bool
@@ -20,15 +21,16 @@ class VCS(Stage, ABC):
         is_logging : bool
             write messages to the log file or not
         log_file_path : str
-            an absolute path to directory for the log file
-        log_name : str
-            a name of the log file
+            a path to directory for the log file
+        stage_name : str
+            stage name
         """
-        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, log_name, is_logging)
+        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging)
         self._vcs_paths = paths.copy()
         for path in self._vcs_paths:
             if not os.path.exists(path):
                 raise FileNotFoundError("VCS: Directory " + path + " doesn't exists!")
+        self._commit_msg = 'new '
 
     @abstractmethod
     def _update_directory(self, path):
@@ -47,8 +49,25 @@ class VCS(Stage, ABC):
         for directory in self._vcs_paths:
             os.chdir(directory)
             not_error = self._update_directory(directory)
-            if self._interrupt_if_fail and not not_error:
+            if not not_error:
                 break
 
         os.chdir(cwd)
         return not_error
+
+    @abstractmethod
+    def add_for_commit(self, file_path, file_name):
+        """
+        Add new file_path for commit.
+        """
+        raise NotImplemented('VCS: add_for_commit is not implemented!')
+
+    @abstractmethod
+    def commit_and_push(self):
+        """
+        Commit and push added file.
+        """
+        raise NotImplemented('VCS: commit_and_push is not implemented!')
+
+    def exec(self):
+        return self._update()
