@@ -1,5 +1,4 @@
 import os
-
 from stage import Stage
 import subprocess
 
@@ -8,6 +7,7 @@ class Test(Stage):
     """
     Class that containing and operating tests.
     """
+
     def __init__(self, script_paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path):
         """
         Parameters

@@ -6,6 +6,16 @@ import filecmp
 class Commit(Stage):
     """
     Base class for commit information.
+
+
+    ...
+
+    Methods
+    -------
+    diff(src_file_path, dst_file_path)
+        binary compare src_file_path and dst_file_path, return True if they are equal
+    get_vcs_obj()
+        return associated vcs object
     """
 
     def __init__(self, auto_commit_and_push, parent_module_name, is_logging, log_file_path, vcs_obj):

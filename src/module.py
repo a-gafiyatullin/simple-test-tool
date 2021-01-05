@@ -13,11 +13,12 @@ class Module:
     Methods
     -------
     topological_sort(modules)
-        Topological sort by dependencies and outputs.
+        topological sort by dependencies and outputs
 
     execute_stages()
-        Execute all stages for this module.
+        execute all stages for this module
     """
+
     MODULE_NAME = 0
     DEST_PATH = 1
     SOURCE_PATH = 2

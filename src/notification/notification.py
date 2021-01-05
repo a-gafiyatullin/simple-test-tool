@@ -29,6 +29,7 @@ class Notification(Stage, ABC):
         text = ""
 
         for logger in self._loggers:
+            logger.close()
             file_path = logger.get_log_file_path()
             text = text + '\n' + Path(file_path).read_text()
         return self._send(text)

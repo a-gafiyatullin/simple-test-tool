@@ -3,7 +3,6 @@ from datetime import date
 
 
 class Logger:
-    latest_log_symlink = 'latest-log.txt'
     """
     Base class for all entities with the logging feature.
 
@@ -13,12 +12,11 @@ class Logger:
     Methods
     -------
     log(message)
-        write a message to the specific log file.
+        write a message to the specific log file
     get_log_file_path()
-        return the log file path or None.
+        return the log file path or None
 
     """
-
     def __init__(self, log_file_dir, stage_name, is_logging):
         """
         Parameters

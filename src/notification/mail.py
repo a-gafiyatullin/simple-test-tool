@@ -42,6 +42,3 @@ class Email(Notification):
 
         del msg
         return True
-
-    def __del__(self):
-        self.__smtp_server.quit()

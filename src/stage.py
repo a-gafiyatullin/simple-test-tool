@@ -13,8 +13,9 @@ class Stage(executable.Executable, ABC):
     Methods
     -------
     log(message)
-        write a message to the specific log file using a parent module name.
-
+        write a message to the specific log file using a parent module name
+    get_logger()
+        return associated logger
     """
 
     def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging):
@@ -50,6 +51,6 @@ class Stage(executable.Executable, ABC):
 
     def get_logger(self):
         """
-        Return the logger
+        Return associated logger.
         """
         return self._logger

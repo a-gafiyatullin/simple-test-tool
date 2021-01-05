@@ -11,7 +11,7 @@ class Executable(ABC):
     Methods
     -------
     exec(message)
-        Execute the stage.
+        Execute the stage
     """
 
     def __init__(self, interrupt_if_fail):

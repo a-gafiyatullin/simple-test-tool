@@ -6,6 +6,16 @@ import os
 class VCS(Stage, ABC):
     """
     Base class for all CSV systems.
+
+
+    ...
+
+    Methods
+    -------
+    add_for_commit(file_path, file_name)
+        add new file in file_path to commit
+    commit_and_push()
+        commit and push added files
     """
 
     def __init__(self, paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name):
@@ -58,14 +68,22 @@ class VCS(Stage, ABC):
     @abstractmethod
     def add_for_commit(self, file_path, file_name):
         """
-        Add new file_path for commit.
+        Add new file in file_path to commit.
+
+
+        Parameters
+        ----------
+        file_path : str
+           a path to the file file_name
+        file_name : str
+            file name
         """
         raise NotImplemented('VCS: add_for_commit is not implemented!')
 
     @abstractmethod
     def commit_and_push(self):
         """
-        Commit and push added file.
+        Commit and push added files.
         """
         raise NotImplemented('VCS: commit_and_push is not implemented!')
 

@@ -34,5 +34,3 @@ class Cmake(Build):
         else:
             self.log('build ERROR!')
             return not self._get_interrupt_if_fail()
-
-
