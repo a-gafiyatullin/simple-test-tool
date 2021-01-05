@@ -49,4 +49,6 @@ class Commit(Stage):
 
     def exec(self):
         if self._auto_commit_and_push:
-            self._vcs_obj.commit_and_push()
+            return self._vcs_obj.commit_and_push()
+        else:
+            return True

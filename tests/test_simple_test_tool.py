@@ -405,3 +405,19 @@ def test_input_test_xml():
 
     assert os.path.exists(base_dir + 'make-build-test-exec') is True
     assert os.path.exists(base_dir + str(date.today()) + '-Make.txt') is True
+
+
+def test_commit():
+    # clone repository
+    root_dir = os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test' + os.sep
+    curr_dir = os.getcwd()
+    os.chdir(root_dir)
+    subprocess.run(root_dir + 'prepare.sh', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    open(root_dir + 'simple-test-tool/test_file_for_commit.txt', 'w').close()
+
+    simple_test_tool.main('input_commit_test.xml')
+
+    os.chdir(curr_dir)
+
+    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-Commit.txt') is True
+    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-Git-Commit.txt') is True

@@ -1,0 +1,12 @@
+<STT>
+    <Module Name="simple-test-tool">
+        <Outputs>
+            <Output Name="test_file_for_commit.txt" Path="simple-test-tool"/>
+        </Outputs>
+        <Stages>
+            <Commit Type = "Git" LogEnable = "On" LogPath = "simple-test-tool" InterruptOnFail = "Off" AutoCommitAndPush="Off">
+                <Path Path="simple-test-tool"/>
+            </Commit>
+        </Stages>
+    </Module>
+</STT>
