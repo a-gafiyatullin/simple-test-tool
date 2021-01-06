@@ -122,6 +122,9 @@ def create_xml_input_file_cmake():
     build.set('LogEnable', 'Off')
     build.set('InterruptOnFail', 'On')
 
+    target = ET.SubElement(build, 'Target')
+    target.set('Name', 'all')
+
     return root
 
 
@@ -141,6 +144,9 @@ def create_xml_input_file_make():
     build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
     build.set('LogEnable', 'Off')
     build.set('InterruptOnFail', 'On')
+
+    target = ET.SubElement(build, 'Target')
+    target.set('Name', 'all')
 
     return root
 
@@ -199,6 +205,9 @@ def create_xml_input_file_modules():
     cmake_build.set('LogEnable', 'Off')
     cmake_build.set('InterruptOnFail', 'On')
 
+    cmake_target = ET.SubElement(cmake_build, 'Target')
+    cmake_target.set('Name', 'all')
+
     # create Outputs
     cmake_outputs = ET.SubElement(cmake_module, 'Outputs')
     cmake_output = ET.SubElement(cmake_outputs, 'Output')
@@ -217,6 +226,9 @@ def create_xml_input_file_modules():
     make_build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
     make_build.set('LogEnable', 'Off')
     make_build.set('InterruptOnFail', 'On')
+
+    make_target = ET.SubElement(make_build, 'Target')
+    make_target.set('Name', 'all')
 
     # create Dependencies
     make_dependencies = ET.SubElement(make_module, 'Dependencies')
@@ -246,6 +258,9 @@ def create_xml_input_file_log_exception():
     build.set('LogEnable', 'On')
     build.set('LogPath', make_dir)
     build.set('InterruptOnFail', 'On')
+
+    target = ET.SubElement(build, 'Target')
+    target.set('Name', 'all')
 
     return root
 
@@ -404,7 +419,7 @@ def test_input_test_xml():
     simple_test_tool.main('tests' + os.sep + 'input_test.xml')
 
     assert os.path.exists(base_dir + 'make-build-test-exec') is True
-    assert os.path.exists(base_dir + str(date.today()) + '-Make.txt') is True
+    assert os.path.exists(base_dir + str(date.today()) + '-Make-build-test.Make.txt') is True
 
 
 def test_commit():
@@ -419,5 +434,6 @@ def test_commit():
 
     os.chdir(curr_dir)
 
-    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-Commit.txt') is True
-    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-Git-Commit.txt') is True
+    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-simple-test-tool.Commit.txt') is True
+    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-simple-test-tool.Git-Commit.txt')\
+           is True

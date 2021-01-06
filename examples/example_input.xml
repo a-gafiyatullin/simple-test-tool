@@ -46,6 +46,8 @@
                 <Path Path = "B/tests/B_test_tool_1.sh" />
                 <Path Path = "b/tests/B_test_tool_2.sh" />
             </Test>
+
+            <Notification Type = "Telegram" Token = "token_string" ChatID = "12345678"/>
         </Stages>
     </Module>
 
@@ -57,5 +59,9 @@
         <Stages>
             <Build Type = "Make" Path = "C/" LogEnable = "Off" InterruptOnFail = "On" />
         </Stages>
+
+        <Commit Type = "Git" LogEnable = "On" LogPath = "C/" InterruptOnFail = "Off" AutoCommitAndPush="Off">
+                <Path Path="C/" />
+        </Commit>
     </Module>
 </STT>

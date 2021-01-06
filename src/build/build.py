@@ -1,5 +1,4 @@
 import os
-
 from stage import Stage
 from abc import ABC, abstractmethod
 
@@ -9,7 +8,7 @@ class Build(Stage, ABC):
     Base class for all building systems.
     """
 
-    def __init__(self, path, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name):
+    def __init__(self, path, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name, targets):
         """
         Parameters
         ----------
@@ -25,9 +24,12 @@ class Build(Stage, ABC):
             a path to directory for the log file
         stage_name : str
             stage name
+        targets : list
+            list of targets to build
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging)
         self._build_path = path
+        self._build_targets = targets.copy()
 
         if not os.path.exists(self._build_path):
             raise FileNotFoundError("Build: Directory " + self._build_path + " doesn't exists!")

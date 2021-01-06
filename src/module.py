@@ -140,29 +140,34 @@ class Module:
 
         # execute stages
 
+        error = False
         if self._stages[Module.VCS_STAGE] is not None:
             if not self._stages[Module.VCS_STAGE].exec():
-                return False
+                error = True
 
-        if self._stages[Module.BUILD_STAGE] is not None:
-            if not self._stages[Module.BUILD_STAGE].exec():
-                return False
+        if not error:
+            if self._stages[Module.BUILD_STAGE] is not None:
+                if not self._stages[Module.BUILD_STAGE].exec():
+                    error = True
 
-        if self._stages[Module.COMMIT_STAGE] is not None:
-            for output in self.output_files:
-                self._stages[Module.COMMIT_STAGE].get_vcs_obj().add_for_commit(output[Module.DEST_PATH],
-                                                                               output[Module.MODULE_NAME])
+        if not error:
+            if self._stages[Module.TEST_STAGE] is not None:
+                if not self._stages[Module.TEST_STAGE].exec():
+                    error = True
 
-        if self._stages[Module.TEST_STAGE] is not None:
-            if not self._stages[Module.TEST_STAGE].exec():
-                return False
-
-        if self._stages[Module.COMMIT_STAGE] is not None:
-            if not self._stages[Module.COMMIT_STAGE].exec():
-                return False
+        if not error:
+            if self._stages[Module.COMMIT_STAGE] is not None:
+                for output in self.output_files:
+                    self._stages[Module.COMMIT_STAGE].get_vcs_obj().add_for_commit(output[Module.DEST_PATH],
+                                                                                   output[Module.MODULE_NAME])
+                    for dependency in self.dependencies:
+                        self._stages[Module.COMMIT_STAGE].get_vcs_obj().add_for_commit(dependency[Module.SOURCE_PATH],
+                                                                                       dependency[Module.MODULE_NAME])
+            if self._stages[Module.COMMIT_STAGE] is not None:
+                if not self._stages[Module.COMMIT_STAGE].exec():
+                    error = True
 
         if self._stages[Module.NOTIFICATION_STAGE] is not None:
-            if not self._stages[Module.NOTIFICATION_STAGE].exec():
-                return False
+            self._stages[Module.NOTIFICATION_STAGE].exec()
 
-        return True
+        return not error

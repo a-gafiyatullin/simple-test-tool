@@ -1,7 +1,9 @@
 <STT>
     <Module Name="Make-build-test">
         <Stages>
-            <Build Type = "Make" Path = "tests/Make-build-test" LogEnable = "On" LogPath = "tests/Make-build-test" InterruptOnFail = "On" />
+            <Build Type = "Make" Path = "tests/Make-build-test" LogEnable = "On" LogPath = "tests/Make-build-test" InterruptOnFail = "On">
+                <Target Name = "all"/>
+            </Build>
         </Stages>
     </Module>
 </STT>

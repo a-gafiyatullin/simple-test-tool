@@ -34,7 +34,7 @@ class Stage(executable.Executable, ABC):
             a parent module name
         """
         executable.Executable.__init__(self, interrupt_if_fail)
-        self._logger = logger.Logger(log_file_path, stage_name, is_logging)
+        self._logger = logger.Logger(log_file_path, parent_module_name + '.' + stage_name, is_logging)
         self._parent_module_name = parent_module_name
         self._stage_name = stage_name
 

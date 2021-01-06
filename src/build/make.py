@@ -23,12 +23,17 @@ class Make(Build):
         cwd = os.getcwd()
         os.chdir(self._build_path)
 
-        not_error = subprocess.run(['make', 'all'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        for target in self._build_targets:
+            not_error = subprocess.run(['make', target], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            if not_error.returncode == 0:
+                self.log('target ' + target + ' build SUCCESS!')
+            else:
+                self.log('target ' + target + ' build ERROR!')
+                if not self._get_interrupt_if_fail():
+                    continue
+                else:
+                    return False
 
         os.chdir(cwd)
-        if not_error.returncode == 0:
-            self.log('build SUCCESS!')
-            return True
-        else:
-            self.log('build ERROR!')
-            return not self._get_interrupt_if_fail()
+        return True

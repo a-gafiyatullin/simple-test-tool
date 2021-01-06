@@ -64,10 +64,14 @@ def create_build_stage(stage_root, module_name):
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
+    targets_list = []
+    for target in stage_root.findall('Target'):
+        targets_list.append(target.get('Name'))
+
     if stage_type == 'CMake':
-        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake')
+        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake', targets_list)
     elif stage_type == 'Make':
-        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make')
+        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make', targets_list)
     else:
         return None
 

@@ -24,13 +24,24 @@ class Cmake(Build):
         os.chdir(dest_path)
 
         not_error = subprocess.run(['cmake', '..'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         if not_error.returncode == 0:
-            not_error = subprocess.run(['make', 'all'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.log('Makefile generation SUCCESS!')
+            for target in self._build_targets:
+                not_error = subprocess.run(['make', target], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+                if not_error.returncode == 0:
+                    self.log('target ' + target + ' build SUCCESS!')
+                else:
+                    self.log('target ' + target + ' build ERROR!')
+                    if not self._get_interrupt_if_fail():
+                        continue
+                    else:
+                        return False
+        else:
+            self.log('Makefile generation ERROR!')
+            os.chdir(cwd)
+            return not self._get_interrupt_if_fail()
 
         os.chdir(cwd)
-        if not_error.returncode == 0:
-            self.log('build SUCCESS!')
-            return True
-        else:
-            self.log('build ERROR!')
-            return not self._get_interrupt_if_fail()
+        return True
