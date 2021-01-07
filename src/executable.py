@@ -10,8 +10,12 @@ class Executable(ABC):
 
     Methods
     -------
+    pre_exec(message)
+        prepare for the stage
     exec(message)
-        Execute the stage
+        execute the main flow of the stage
+    post_exec(message)
+        finalize the stage
     """
 
     def __init__(self, interrupt_if_fail):
@@ -29,6 +33,20 @@ class Executable(ABC):
         Execute the stage.
         """
         raise NotImplemented('Executable: exec is not implemented!')
+
+    @abstractmethod
+    def pre_exec(self):
+        """
+        Execute the stage.
+        """
+        raise NotImplemented('Executable: pre_exec is not implemented!')
+
+    @abstractmethod
+    def post_exec(self):
+        """
+        Execute the stage.
+        """
+        raise NotImplemented('Executable: post_exec is not implemented!')
 
     def _get_interrupt_if_fail(self):
         """

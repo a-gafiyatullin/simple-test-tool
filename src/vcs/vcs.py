@@ -87,5 +87,11 @@ class VCS(Stage, ABC):
         """
         raise NotImplemented('VCS: commit_and_push is not implemented!')
 
+    def pre_exec(self):
+        return True
+
     def exec(self):
         return self._update()
+
+    def post_exec(self):
+        return True

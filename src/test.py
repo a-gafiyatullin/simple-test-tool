@@ -44,5 +44,11 @@ class Test(Stage):
 
         return True
 
+    def pre_exec(self):
+        return True
+
     def exec(self):
         return self._test()
+
+    def post_exec(self):
+        return True

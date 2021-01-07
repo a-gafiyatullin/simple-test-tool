@@ -25,6 +25,9 @@ class Notification(Stage, ABC):
         """
         raise NotImplemented('Notification: _send is not implemented!')
 
+    def pre_exec(self):
+        return True
+
     def exec(self):
         text = ""
 
@@ -33,3 +36,6 @@ class Notification(Stage, ABC):
             file_path = logger.get_log_file_path()
             text = text + '\n' + Path(file_path).read_text()
         return self._send(text)
+
+    def post_exec(self):
+        return True

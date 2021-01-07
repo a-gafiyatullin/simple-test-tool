@@ -348,7 +348,10 @@ def test_cmake_build_stage():
     build_obj = simple_test_tool.create_build_stage(build, name)
     assert build_obj is not None
 
+    build_obj.pre_exec()
     build_obj.exec()
+    build_obj.post_exec()
+    
     assert os.path.exists(
         os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build/CMake-build-test-exec') is True
 
@@ -366,7 +369,10 @@ def test_make_build_stage():
     build_obj = simple_test_tool.create_build_stage(build, name)
     assert build_obj is not None
 
+    build_obj.pre_exec()
     build_obj.exec()
+    build_obj.post_exec()
+    
     assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
 
 
@@ -383,7 +389,10 @@ def test_git_vcs_and_test_stage():
     vcs_obj = simple_test_tool.create_vcs_stage(vcs, name)
     assert vcs_obj is not None
 
+    vcs_obj.pre_exec()
     vcs_obj.exec()
+    vcs_obj.post_exec()
+    
     assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test/simple-test-tool') is True
 
     test = stages.find('Test')
@@ -391,7 +400,9 @@ def test_git_vcs_and_test_stage():
     test_obj = simple_test_tool.create_test_stage(test, name)
     assert test_obj is not None
 
+    test_obj.pre_exec()
     test_obj.exec()
+    test_obj.post_exec()
 
 
 def test_create_module():
@@ -407,6 +418,7 @@ def test_create_module():
     assert topological_sorted_modules is not None
 
     topological_sorted_modules[0].execute_stages()
+    topological_sorted_modules[1].execute_stages()
     assert os.path.exists(
         os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/CMake-build-test-exec') is True
 

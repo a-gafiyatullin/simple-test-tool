@@ -57,8 +57,14 @@ class Commit(Stage):
     def get_vcs_obj(self):
         return self._vcs_obj
 
+    def pre_exec(self):
+        return True
+
     def exec(self):
         if self._auto_commit_and_push:
             return self._vcs_obj.commit_and_push()
         else:
             return True
+
+    def post_exec(self):
+        return True

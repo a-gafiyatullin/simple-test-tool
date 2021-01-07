@@ -29,6 +29,8 @@ class Build(Stage, ABC):
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging)
         self._build_path = path
+        if self._build_path[-1] != os.sep:
+            self._build_path += os.sep
         self._build_targets = targets.copy()
 
         if not os.path.exists(self._build_path):
@@ -48,7 +50,11 @@ class Build(Stage, ABC):
         """
         raise NotImplemented('Build: _build is not implemented!')
 
-    def exec(self):
-        self._clean()
+    def pre_exec(self):
+        return self._clean()
 
+    def exec(self):
         return self._build()
+
+    def post_exec(self):
+        return True

@@ -100,12 +100,16 @@ class Module:
                 i = i + 1
             j = j + 1
 
+        i = 0
+        for vert_list in graph:
+            graph[i] = list(dict.fromkeys(vert_list))
+            i = i + 1
+
         used_vertices = [False] * len(modules)
         topological_sorted_vertices = []
         for i in range(len(used_vertices)):
             if not used_vertices[i]:
                 Module.__dfs(graph, used_vertices, topological_sorted_vertices, i)
-        topological_sorted_vertices.reverse()
 
         ret_modules = []
         for i in topological_sorted_vertices:
@@ -117,6 +121,24 @@ class Module:
         """
         Execute all stages for this module.
         """
+
+        # execute stages
+        error = False
+        if self._stages[Module.VCS_STAGE] is not None:
+            if not self._stages[Module.VCS_STAGE].pre_exec():
+                error = True
+            if not error:
+                if not self._stages[Module.VCS_STAGE].exec():
+                    error = True
+            if not error:
+                if not self._stages[Module.VCS_STAGE].post_exec():
+                    error = True
+
+        if not error:
+            if self._stages[Module.BUILD_STAGE] is not None:
+                if not self._stages[Module.BUILD_STAGE].pre_exec():
+                    error = True
+
         # copy dependencies
         for dependency in self.dependencies:
             source = dependency[Module.SOURCE_PATH] + os.sep + dependency[Module.MODULE_NAME]
@@ -138,22 +160,24 @@ class Module:
                 else:
                     raise
 
-        # execute stages
-
-        error = False
-        if self._stages[Module.VCS_STAGE] is not None:
-            if not self._stages[Module.VCS_STAGE].exec():
-                error = True
-
         if not error:
             if self._stages[Module.BUILD_STAGE] is not None:
                 if not self._stages[Module.BUILD_STAGE].exec():
                     error = True
+                if not error:
+                    if not self._stages[Module.BUILD_STAGE].post_exec():
+                        error = True
 
         if not error:
             if self._stages[Module.TEST_STAGE] is not None:
-                if not self._stages[Module.TEST_STAGE].exec():
+                if not self._stages[Module.TEST_STAGE].pre_exec():
                     error = True
+                if not error:
+                    if not self._stages[Module.TEST_STAGE].exec():
+                        error = True
+                if not error:
+                    if not self._stages[Module.TEST_STAGE].post_exec():
+                        error = True
 
         if not error:
             if self._stages[Module.COMMIT_STAGE] is not None:
@@ -168,6 +192,14 @@ class Module:
                     error = True
 
         if self._stages[Module.NOTIFICATION_STAGE] is not None:
-            self._stages[Module.NOTIFICATION_STAGE].exec()
+            if self._stages[Module.NOTIFICATION_STAGE] is not None:
+                if not self._stages[Module.NOTIFICATION_STAGE].pre_exec():
+                    error = True
+                if not error:
+                    if not self._stages[Module.NOTIFICATION_STAGE].exec():
+                        error = True
+                if not error:
+                    if not self._stages[Module.NOTIFICATION_STAGE].post_exec():
+                        error = True
 
         return not error

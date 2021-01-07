@@ -9,6 +9,7 @@ from vcs.git import Git
 from vcs.svn import SVN
 import xml.etree.ElementTree as ET
 import sys
+import os
 
 
 def create_vcs_stage(stage_root, module_name):
@@ -208,6 +209,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('usage: python3 simple-test-tool.py [path_to_config]')
         exit(-1)
+    os.chdir(os.path.dirname(sys.argv[1]))
 
     main(sys.argv[1])
 
