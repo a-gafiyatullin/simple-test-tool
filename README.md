@@ -62,7 +62,27 @@ Attributes:
 Possible values:
 <ul>
 <li><strong>Make;</strong></li>
-<li><strong>CMake.</strong></li>
+<li><strong>CMake;</strong></li>
+<li><strong>Custom.</strong></li>
+Subtag:
+<ul>
+<li><strong>PreScript</strong> - script for prepare before build;</li>
+Attributes:
+<ul>
+<li><strong>Path</strong> - path name.</li>
+</ul>
+<li><strong>MainScript</strong> - build script;</li>
+Attributes:
+<ul>
+<li><strong>Path</strong> - path name.</li>
+</ul>
+<li><strong>PostScript</strong> - script for actions after build.</li>
+Attributes:
+<ul>
+<li><strong>Path</strong> - path name.</li>
+</ul>
+</ul>
+
 </ul>
 
 <li><strong>Path</strong> - build system root directory.</li>
@@ -100,7 +120,7 @@ Attributes:
 <li><strong>Test</strong> - test application using scripts;</li>
 Subtag:
 <ul>
-<li><strong>Path</strong> - test script paths:</li>
+<li><strong>MainScript</strong> - test script path:</li>
 Attributes:
 <ul>
 <li><strong>Path</strong> - path name.</li>
