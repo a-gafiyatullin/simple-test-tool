@@ -33,7 +33,7 @@ class Commit(Stage):
         vcs_obj : VCS
             VCS object
         """
-        Stage.__init__(self, parent_module_name, False, log_file_path, 'Commit', is_logging)
+        Stage.__init__(self, parent_module_name, False, log_file_path, 'Commit', is_logging, "", "", "")
         self._vcs_obj = vcs_obj
         self._auto_commit_and_push = auto_commit_and_push
 

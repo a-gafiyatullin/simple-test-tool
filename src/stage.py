@@ -18,7 +18,8 @@ class Stage(executable.Executable, ABC):
         return associated logger
     """
 
-    def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging):
+    def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging,
+                 pre_script_path, main_script_path, post_script_path):
         """
         Parameters
         ----------
@@ -32,8 +33,14 @@ class Stage(executable.Executable, ABC):
             interrupt the execution of the all stages if an error has occurred
         parent_module_name: str
             a parent module name
+        pre_script_path : str
+            script for pre_exec()
+        main_script_path : str
+            script for exec()
+        post_script_path : str
+            script for post_exec()
         """
-        executable.Executable.__init__(self, interrupt_if_fail)
+        executable.Executable.__init__(self, interrupt_if_fail, pre_script_path, main_script_path, post_script_path)
         self._logger = logger.Logger(log_file_path, parent_module_name + '.' + stage_name, is_logging)
         self._parent_module_name = parent_module_name
         self._stage_name = stage_name

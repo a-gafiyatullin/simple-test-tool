@@ -80,7 +80,7 @@ def create_xml_input_file_tests_fail():
     tests.set('LogEnable', 'Off')
     tests.set('InterruptOnFail', 'On')
     # create Path
-    path = ET.SubElement(tests, 'Path')
+    path = ET.SubElement(tests, 'MainScript')
     path.set('Path', 'TEST/')
 
     return root
@@ -182,7 +182,7 @@ def create_xml_input_file_git_and_test():
     test.set('LogEnable', 'Off')
     test.set('InterruptOnFail', 'On')
 
-    test_path = ET.SubElement(test, 'Path')
+    test_path = ET.SubElement(test, 'MainScript')
     test_path.set('Path', root_dir + 'test.sh')
 
     return root

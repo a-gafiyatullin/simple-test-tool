@@ -1,4 +1,5 @@
 from build.cmake import Cmake
+from build.custom import Custom
 from build.make import Make
 from module import Module
 from notification.mail import Email
@@ -69,10 +70,29 @@ def create_build_stage(stage_root, module_name):
     for target in stage_root.findall('Target'):
         targets_list.append(target.get('Name'))
 
+    pre_script_path = ""
+    main_script_path = ""
+    post_script_path = ""
+
+    pre_script = stage_root.find("PreScript")
+    if pre_script is not None:
+        pre_script_path = pre_script.get("Path")
+    main_script = stage_root.find("MainScript")
+    if main_script is not None:
+        main_script_path = main_script.get("Path")
+    post_script = stage_root.find("PostScript")
+    if post_script is not None:
+        post_script_path = post_script.get("Path")
+
     if stage_type == 'CMake':
-        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake', targets_list)
+        return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake', targets_list,
+                     pre_script_path, main_script_path, post_script_path)
     elif stage_type == 'Make':
-        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make', targets_list)
+        return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make', targets_list,
+                    pre_script_path, main_script_path, post_script_path)
+    elif stage_type == 'Custom':
+        return Custom(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Custom', targets_list,
+                      pre_script_path, main_script_path, post_script_path)
     else:
         return None
 
@@ -98,9 +118,11 @@ def create_notification_stage(stage_root, loggers):
 
 
 def create_test_stage(stage_root, module_name):
-    paths = []
-    for path in stage_root.findall('Path'):
-        paths.append(path.get('Path'))
+    path = ""
+    path_tag = stage_root.find('MainScript')
+    if path_tag is not None:
+        path = path_tag.get('Path')
+
     log_enable = True if stage_root.get('LogEnable') == 'On' else False
     log_path = ''
 
@@ -109,7 +131,7 @@ def create_test_stage(stage_root, module_name):
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
 
-    return Test(paths, module_name, interrupt_on_fail, log_enable, log_path)
+    return Test(path, module_name, interrupt_on_fail, log_enable, log_path)
 
 
 def read_outputs(outputs_root):

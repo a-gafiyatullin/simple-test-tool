@@ -15,7 +15,7 @@ class Notification(Stage, ABC):
         loggers: list
             list of loggers to send
         """
-        Stage.__init__(self, "", False, "", "Notification", False)
+        Stage.__init__(self, "", False, "", "Notification", False, "", "", "")
         self._loggers = loggers
 
     @abstractmethod

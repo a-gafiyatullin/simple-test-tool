@@ -35,7 +35,7 @@ class VCS(Stage, ABC):
         stage_name : str
             stage name
         """
-        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging)
+        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging, "", "", "")
         self._vcs_paths = paths.copy()
         for path in self._vcs_paths:
             if not os.path.exists(path):
