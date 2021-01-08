@@ -67,12 +67,8 @@ class Build(Stage, ABC):
 
     def post_exec(self):
         if self._post_script_path != "":
-            cwd = os.getcwd()
-            os.chdir(self._build_path)
-
             build = subprocess.run(self._post_script_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            os.chdir(cwd)
             if build.returncode != 0:
                 self.log('execution ' + self._post_script_path + ' finished with ERROR!')
                 return self._get_interrupt_if_fail()

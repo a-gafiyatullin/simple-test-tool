@@ -65,6 +65,25 @@ def create_xml_input_file_tests():
     return root
 
 
+def create_xml_input_file_telegram():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Test stage
+    notification = ET.SubElement(stages, 'Notification')
+    notification.set('Type', 'Telegram')
+    notification.set('Token', '12345678')
+    notification.set('ChatID', '12345678')
+
+    return root
+
+
 def create_xml_input_file_tests_fail():
     # create root
     root = ET.Element('STT')
@@ -81,7 +100,7 @@ def create_xml_input_file_tests_fail():
     tests.set('InterruptOnFail', 'On')
     # create Path
     path = ET.SubElement(tests, 'MainScript')
-    path.set('Path', 'TEST/')
+    path.set('Path', 'TEST' + os.sep)
 
     return root
 
@@ -151,6 +170,33 @@ def create_xml_input_file_make():
     return root
 
 
+def create_xml_input_file_custom_build():
+    # create root
+    root = ET.Element('STT')
+
+    # create Module
+    test_module = ET.SubElement(root, 'Module')
+    test_module.set('Name', 'TEST')
+
+    # create Stages
+    stages = ET.SubElement(test_module, 'Stages')
+    # create Build stage
+    build = ET.SubElement(stages, 'Build')
+    build.set('Type', 'Custom')
+    build.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test')
+    build.set('LogEnable', 'Off')
+    build.set('InterruptOnFail', 'On')
+
+    main_script = ET.SubElement(build, 'MainScript')
+    main_script.set('Path', 'tests' + os.sep + 'Make-build-test' + os.sep + 'main_build_script.sh')
+    pre_script = ET.SubElement(build, 'PreScript')
+    pre_script.set('Path', 'tests' + os.sep + 'Make-build-test' + os.sep + 'pre_build_script.sh')
+    post_script = ET.SubElement(build, 'PostScript')
+    post_script.set('Path', 'tests' + os.sep + 'Make-build-test' + os.sep + 'post_build_script.sh')
+
+    return root
+
+
 def create_xml_input_file_git_and_test():
     # clone repository
     root_dir = os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test' + os.sep
@@ -212,7 +258,7 @@ def create_xml_input_file_modules():
     cmake_outputs = ET.SubElement(cmake_module, 'Outputs')
     cmake_output = ET.SubElement(cmake_outputs, 'Output')
     cmake_output.set('Name', 'CMake-build-test-exec')
-    cmake_output.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build')
+    cmake_output.set('Path', os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test' + os.sep + 'build')
 
     # create Make Module
     make_module = ET.SubElement(root, 'Module')
@@ -353,7 +399,8 @@ def test_cmake_build_stage():
     build_obj.post_exec()
     
     assert os.path.exists(
-        os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test/build/CMake-build-test-exec') is True
+        os.getcwd() + os.sep + 'tests' + os.sep + 'Cmake-build-test' + os.sep + 'build' + os.sep
+        + 'CMake-build-test-exec') is True
 
 
 def test_make_build_stage():
@@ -373,7 +420,29 @@ def test_make_build_stage():
     build_obj.exec()
     build_obj.post_exec()
     
-    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test' + os.sep
+                          + 'make-build-test-exec') is True
+
+
+def test_custom_build_stage():
+    root = create_xml_input_file_custom_build()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    build = stages.find('Build')
+
+    build_obj = simple_test_tool.create_build_stage(build, name)
+    assert build_obj is not None
+
+    build_obj.pre_exec()
+    build_obj.exec()
+    build_obj.post_exec()
+
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test' + os.sep
+                          + 'make-build-test-exec') is True
 
 
 def test_git_vcs_and_test_stage():
@@ -393,7 +462,7 @@ def test_git_vcs_and_test_stage():
     vcs_obj.exec()
     vcs_obj.post_exec()
     
-    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test/simple-test-tool') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'VCS-test' + os.sep + 'simple-test-tool') is True
 
     test = stages.find('Test')
 
@@ -420,10 +489,11 @@ def test_create_module():
     topological_sorted_modules[0].execute_stages()
     topological_sorted_modules[1].execute_stages()
     assert os.path.exists(
-        os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/CMake-build-test-exec') is True
+        os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test' + os.sep + 'CMake-build-test-exec') is True
 
     topological_sorted_modules[1].execute_stages()
-    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test/make-build-test-exec') is True
+    assert os.path.exists(os.getcwd() + os.sep + 'tests' + os.sep + 'Make-build-test' + os.sep +
+                          'make-build-test-exec') is True
 
 
 def test_input_test_xml():
@@ -440,12 +510,27 @@ def test_commit():
     curr_dir = os.getcwd()
     os.chdir(root_dir)
     subprocess.run(root_dir + 'prepare.sh', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    open(root_dir + 'simple-test-tool/test_file_for_commit.txt', 'w').close()
+    open(root_dir + 'simple-test-tool' + os.sep + 'test_file_for_commit.txt', 'w').close()
 
     simple_test_tool.main('input_commit_test.xml')
 
     os.chdir(curr_dir)
 
-    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-simple-test-tool.Commit.txt') is True
-    assert os.path.exists(root_dir + 'simple-test-tool/' + str(date.today()) + '-simple-test-tool.Git-Commit.txt')\
-           is True
+    assert os.path.exists(root_dir + 'simple-test-tool' + os.sep + str(date.today())
+                          + '-simple-test-tool.Commit.txt') is True
+    assert os.path.exists(root_dir + 'simple-test-tool' + os.sep + str(date.today())
+                          + '-simple-test-tool.Git-Commit.txt') is True
+
+
+def test_telegram_stage():
+    root = create_xml_input_file_telegram()
+    module = root.find('Module')
+
+    name = module.get('Name')
+    assert name == 'TEST'
+
+    stages = module.find('Stages')
+    build = stages.find('Notification')
+
+    notification_obj = simple_test_tool.create_notification_stage(build, name)
+    assert notification_obj is not None
