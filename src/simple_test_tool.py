@@ -186,7 +186,7 @@ def create_module(module_root):
 
     notification_stage = stages_root.find('Notification')
     if notification_stage is not None:
-        stages.append(create_notification_stage(notification_stage, loggers))
+        stages[Module.NOTIFICATION_STAGE] = create_notification_stage(notification_stage, loggers)
         print('Created Notification stage for ' + module_name)
 
     outputs_list = []

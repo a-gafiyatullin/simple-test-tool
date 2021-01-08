@@ -37,9 +37,9 @@ class Test(Stage):
         self.log("Stderr:")
         self.log(test.stderr.decode('utf-8'))
 
-        self.log("Test finished with code :" + str(test.returncode))
+        self.log("Test finished with code " + str(test.returncode))
         if test.returncode != 0:
-            return self._get_interrupt_if_fail()
+            return not self._get_interrupt_if_fail()
 
         return True
 
