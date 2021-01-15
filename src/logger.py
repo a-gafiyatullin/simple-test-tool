@@ -15,9 +15,14 @@ class Logger:
         write a message to the specific log file
     get_log_file_path()
         return the log file path or None
-
+    get_only_fail_notification()
+        return notification condition
+    set_execution_status(status)
+        set execution status of the Stage
+    get_execution_status()
+        get execution status of the Stage
     """
-    def __init__(self, log_file_dir, stage_name, is_logging):
+    def __init__(self, log_file_dir, stage_name, is_logging, only_fail_notification):
         """
         Parameters
         ----------
@@ -27,10 +32,14 @@ class Logger:
             stage name
         is_logging : bool
             write messages to the log file or not
+        only_fail_notification : bool
+            notification condition
         """
         log_name = str(date.today()) + '-' + stage_name + '.txt'
 
         self._is_logging = is_logging
+        self._only_fail_notification = only_fail_notification
+        self._execution_status = True
 
         if self._is_logging:
             if os.path.exists(log_file_dir) and os.path.isdir(log_file_dir):
@@ -61,9 +70,32 @@ class Logger:
 
     def get_log_file_path(self):
         """
-        Return the log file path or None
+        Return the log file path or None.
         """
         return self._log_file_path
+
+    def get_only_fail_notification(self):
+        """
+        Return notification condition.
+        """
+        return self._only_fail_notification
+
+    def set_execution_status(self, status):
+        """
+        Set execution status.
+
+        Parameters
+        ----------
+        status : bool
+           new Stage execution
+        """
+        self._execution_status = status
+
+    def get_execution_status(self):
+        """
+        Get execution status.
+        """
+        return self._execution_status
 
     def close(self):
         """

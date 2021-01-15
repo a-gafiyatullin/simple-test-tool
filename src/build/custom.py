@@ -1,6 +1,5 @@
 from build.build import Build
 import subprocess
-import os
 
 
 class Custom(Build):
@@ -10,8 +9,9 @@ class Custom(Build):
             build = subprocess.run(self._pre_script_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             if build.returncode != 0:
+                self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
                 self.log('execution ' + self._pre_script_path + ' finished with ERROR!')
-                return self._get_interrupt_if_fail()
+                return not self._get_interrupt_if_fail()
             else:
                 self.log('execution ' + self._pre_script_path + ' finished with SUCCESS!')
 
@@ -22,8 +22,9 @@ class Custom(Build):
             build = subprocess.run(self._main_script_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             if build.returncode != 0:
+                self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
                 self.log('execution ' + self._main_script_path + ' finished with ERROR!')
-                return self._get_interrupt_if_fail()
+                return not self._get_interrupt_if_fail()
             else:
                 self.log('execution ' + self._main_script_path + ' finished with SUCCESS!')
 

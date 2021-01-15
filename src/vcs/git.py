@@ -13,7 +13,8 @@ class Git(VCS):
             return True
         else:
             self.log('update ERROR!')
-            return False
+            self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
+            return not self._get_interrupt_if_fail()
 
     def add_for_commit(self, file_path, file_name):
         if file_path[-1] != os.sep:
@@ -27,6 +28,7 @@ class Git(VCS):
             return True
         else:
             self.log('cannot add ' + file_name + ' to commit!')
+            self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
             return not self._get_interrupt_if_fail()
 
     def commit_and_push(self):
@@ -35,7 +37,11 @@ class Git(VCS):
                                        stderr=subprocess.PIPE)
             if not_error.returncode != 0:
                 self.log(vcs_path + ': commit ERROR!')
-                return not self._get_interrupt_if_fail()
+                if not self._get_interrupt_if_fail():
+                    continue
+                else:
+                    self.get_logger().set_execution_status(False)
+                    return False
             else:
                 self.log(vcs_path + ': commit SUCCESS!')
 
@@ -43,7 +49,12 @@ class Git(VCS):
 
             if not_error.returncode != 0:
                 self.log(vcs_path + ': push ERROR!')
-                return not self._get_interrupt_if_fail()
+                if not self._get_interrupt_if_fail():
+                    continue
+                else:
+                    self.get_logger().set_execution_status(False)
+                    return False
             else:
                 self.log(vcs_path + ': push SUCCESS!')
-                return True
+
+        return True

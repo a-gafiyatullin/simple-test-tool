@@ -25,11 +25,12 @@ def create_vcs_stage(stage_root, module_name):
         log_path = stage_root.get('LogPath')
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
+    only_fail_notification = True if stage_root.get('OnlyFailNotification') == 'On' else False
 
     if stage_type == 'Git':
-        return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, 'Git')
+        return Git(paths, module_name, interrupt_on_fail, log_enable, log_path, 'Git', only_fail_notification)
     elif stage_type == 'SVN':
-        return SVN(paths, module_name, interrupt_on_fail, log_enable, log_path, 'SVN')
+        return SVN(paths, module_name, interrupt_on_fail, log_enable, log_path, 'SVN', only_fail_notification)
     else:
         return None
 
@@ -46,11 +47,13 @@ def create_commit_stage(stage_root, module_name):
     if log_enable:
         log_path = stage_root.get('LogPath')
 
+    only_fail_notification = True if stage_root.get('OnlyFailNotification') == 'On' else False
+
     vcs_obj = None
     if stage_type == 'Git':
-        vcs_obj = Git(paths, module_name, False, log_enable, log_path, 'Git-Commit')
+        vcs_obj = Git(paths, module_name, False, log_enable, log_path, 'Git-Commit', only_fail_notification)
     elif stage_type == 'SVN':
-        vcs_obj = SVN(paths, module_name, False, log_enable, log_path, 'SVN-Commit')
+        vcs_obj = SVN(paths, module_name, False, log_enable, log_path, 'SVN-Commit', only_fail_notification)
 
     return Commit(auto_commit_and_push, module_name, log_enable, log_path, vcs_obj)
 
@@ -84,15 +87,17 @@ def create_build_stage(stage_root, module_name):
     if post_script is not None:
         post_script_path = post_script.get("Path")
 
+    only_fail_notification = True if stage_root.get('OnlyFailNotification') == 'On' else False
+
     if stage_type == 'CMake':
         return Cmake(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'CMake', targets_list,
-                     pre_script_path, main_script_path, post_script_path)
+                     pre_script_path, main_script_path, post_script_path, only_fail_notification)
     elif stage_type == 'Make':
         return Make(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Make', targets_list,
-                    pre_script_path, main_script_path, post_script_path)
+                    pre_script_path, main_script_path, post_script_path, only_fail_notification)
     elif stage_type == 'Custom':
         return Custom(stage_path, module_name, interrupt_on_fail, log_enable, log_path, 'Custom', targets_list,
-                      pre_script_path, main_script_path, post_script_path)
+                      pre_script_path, main_script_path, post_script_path, only_fail_notification)
     else:
         return None
 
@@ -130,8 +135,9 @@ def create_test_stage(stage_root, module_name):
         log_path = stage_root.get('LogPath')
 
     interrupt_on_fail = True if stage_root.get('InterruptOnFail') == 'On' else False
+    only_fail_notification = True if stage_root.get('OnlyFailNotification') == 'On' else False
 
-    return Test(path, module_name, interrupt_on_fail, log_enable, log_path)
+    return Test(path, module_name, interrupt_on_fail, log_enable, log_path, only_fail_notification)
 
 
 def read_outputs(outputs_root):

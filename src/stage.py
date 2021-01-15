@@ -19,7 +19,7 @@ class Stage(executable.Executable, ABC):
     """
 
     def __init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging,
-                 pre_script_path, main_script_path, post_script_path):
+                 pre_script_path, main_script_path, post_script_path, only_fail_notification):
         """
         Parameters
         ----------
@@ -39,9 +39,12 @@ class Stage(executable.Executable, ABC):
             script for exec()
         post_script_path : str
             script for post_exec()
+        only_fail_notification : bool
+            notification condition
         """
         executable.Executable.__init__(self, interrupt_if_fail, pre_script_path, main_script_path, post_script_path)
-        self._logger = logger.Logger(log_file_path, parent_module_name + '.' + stage_name, is_logging)
+        self._logger = logger.Logger(log_file_path, parent_module_name + '.' + stage_name, is_logging,
+                                     only_fail_notification)
         self._parent_module_name = parent_module_name
         self._stage_name = stage_name
 

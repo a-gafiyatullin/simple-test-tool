@@ -25,7 +25,7 @@ class Commit(Stage):
         parent_module_name: str
             a parent module name
         auto_commit_and_push : bool
-            auto commit and push after notification stage
+            auto commit and push after Test stage
         is_logging : bool
             write messages to the log file or not
         log_file_path : str
@@ -33,7 +33,7 @@ class Commit(Stage):
         vcs_obj : VCS
             VCS object
         """
-        Stage.__init__(self, parent_module_name, False, log_file_path, 'Commit', is_logging, "", "", "")
+        Stage.__init__(self, parent_module_name, False, log_file_path, 'Commit', is_logging, "", "", "", False)
         self._vcs_obj = vcs_obj
         self._auto_commit_and_push = auto_commit_and_push
 

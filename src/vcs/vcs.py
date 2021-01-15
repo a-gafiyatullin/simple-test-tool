@@ -18,7 +18,8 @@ class VCS(Stage, ABC):
         commit and push added files
     """
 
-    def __init__(self, paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name):
+    def __init__(self, paths, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name,
+                 only_fail_notification):
         """
         Parameters
         ----------
@@ -34,8 +35,11 @@ class VCS(Stage, ABC):
             a path to directory for the log file
         stage_name : str
             stage name
+        only_fail_notification : bool
+            notification condition
         """
-        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging, "", "", "")
+        Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging, "", "", "",
+                       only_fail_notification)
         self._vcs_paths = paths.copy()
         for path in self._vcs_paths:
             if not os.path.exists(path):

@@ -17,6 +17,7 @@ class Make(Build):
         if not_error.returncode == 0:
             return True
         else:
+            self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
             return not self._get_interrupt_if_fail()
 
     def _build(self):
@@ -33,6 +34,7 @@ class Make(Build):
                 if not self._get_interrupt_if_fail():
                     continue
                 else:
+                    self.get_logger().set_execution_status(False)
                     return False
 
         os.chdir(cwd)

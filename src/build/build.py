@@ -10,7 +10,7 @@ class Build(Stage, ABC):
     """
 
     def __init__(self, path, parent_module_name, interrupt_if_fail, is_logging, log_file_path, stage_name, targets,
-                 pre_script_path, main_script_path, post_script_path):
+                 pre_script_path, main_script_path, post_script_path, only_fail_notification):
         """
         Parameters
         ----------
@@ -34,9 +34,11 @@ class Build(Stage, ABC):
             script for exec()
         post_script_path : str
             script for post_exec()
+        only_fail_notification : bool
+            notification condition
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, stage_name, is_logging,
-                       pre_script_path, main_script_path, post_script_path)
+                       pre_script_path, main_script_path, post_script_path, only_fail_notification)
         self._build_path = path
         if self._build_path[-1] != os.sep:
             self._build_path += os.sep
@@ -70,8 +72,9 @@ class Build(Stage, ABC):
             build = subprocess.run(self._post_script_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             if build.returncode != 0:
+                self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
                 self.log('execution ' + self._post_script_path + ' finished with ERROR!')
-                return self._get_interrupt_if_fail()
+                return not self._get_interrupt_if_fail()
             else:
                 self.log('execution ' + self._post_script_path + ' finished with SUCCESS!')
 

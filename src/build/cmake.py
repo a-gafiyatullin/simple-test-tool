@@ -37,9 +37,11 @@ class Cmake(Build):
                     if not self._get_interrupt_if_fail():
                         continue
                     else:
+                        self.get_logger().set_execution_status(False)
                         return False
         else:
             self.log('Makefile generation ERROR!')
+            self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
             os.chdir(cwd)
             return not self._get_interrupt_if_fail()
 

@@ -8,7 +8,8 @@ class Test(Stage):
     Class that containing and operating tests.
     """
 
-    def __init__(self, script_path, parent_module_name, interrupt_if_fail, is_logging, log_file_path):
+    def __init__(self, script_path, parent_module_name, interrupt_if_fail, is_logging, log_file_path,
+                 only_fail_notification):
         """
         Parameters
         ----------
@@ -22,9 +23,11 @@ class Test(Stage):
             write messages to the log file or not
         log_file_path : str
             an absolute path to directory for the log file
+        only_fail_notification : bool
+            notification condition
         """
         Stage.__init__(self, parent_module_name, interrupt_if_fail, log_file_path, 'Test', is_logging, "",
-                       script_path, "")
+                       script_path, "", only_fail_notification)
 
     def pre_exec(self):
         return True
@@ -38,7 +41,9 @@ class Test(Stage):
         self.log(test.stderr.decode('utf-8'))
 
         self.log("Test finished with code " + str(test.returncode))
+
         if test.returncode != 0:
+            self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
             return not self._get_interrupt_if_fail()
 
         return True
