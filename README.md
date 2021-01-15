@@ -179,7 +179,8 @@ Also, all stages have attributes:
 <ul>
 <li><strong>LogEnable</strong> - write all execute statuses into log file;</li>
 <li><strong>LogPath</strong> - path for log file;</li>
-<li><strong>InterruptOnFail</strong> - interrupt execution of all stages if something went wrong(except Notification stage).</li>
+<li><strong>InterruptOnFail</strong> - interrupt execution of all stages if something went wrong(except Notification stage);</li>
+<li><strong>OnlyFailNotification</strong> - notify only if Stage fail.</li>
 </ul>
 Log file name consists of current date, Module name and Stage name.
 
