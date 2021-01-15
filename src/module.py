@@ -192,14 +192,8 @@ class Module:
                     error = True
 
         if self._stages[Module.NOTIFICATION_STAGE] is not None:
-            if self._stages[Module.NOTIFICATION_STAGE] is not None:
-                if not self._stages[Module.NOTIFICATION_STAGE].pre_exec():
-                    error = True
-                if not error:
-                    if not self._stages[Module.NOTIFICATION_STAGE].exec():
-                        error = True
-                if not error:
-                    if not self._stages[Module.NOTIFICATION_STAGE].post_exec():
-                        error = True
+            self._stages[Module.NOTIFICATION_STAGE].pre_exec()
+            self._stages[Module.NOTIFICATION_STAGE].exec()
+            self._stages[Module.NOTIFICATION_STAGE].post_exec()
 
         return not error
