@@ -36,8 +36,7 @@ class Notification(Stage, ABC):
             if (logger.get_only_fail_notification() and not logger.get_execution_status())\
                     or not logger.get_only_fail_notification():
                 file_path = logger.get_log_file_path()
-                text = text + '\n' + Path(file_path).read_text()
-                return self._send(text)
+                self._send(Path(file_path).read_text())
 
         return True
 
