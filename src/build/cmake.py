@@ -23,6 +23,7 @@ class Cmake(Build):
         cwd = os.getcwd()
         os.chdir(dest_path)
 
+        ret_status = True
         not_error = subprocess.run(['cmake', '..'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if not_error.returncode == 0:
@@ -38,12 +39,11 @@ class Cmake(Build):
                         continue
                     else:
                         self.get_logger().set_execution_status(False)
-                        return False
+                        ret_status = False
         else:
             self.log('Makefile generation ERROR!')
             self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
-            os.chdir(cwd)
-            return not self._get_interrupt_if_fail()
+            ret_status = self._get_interrupt_if_fail()
 
         os.chdir(cwd)
-        return True
+        return ret_status

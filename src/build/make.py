@@ -24,6 +24,8 @@ class Make(Build):
         cwd = os.getcwd()
         os.chdir(self._build_path)
 
+        ret_status = True
+
         for target in self._build_targets:
             not_error = subprocess.run(['make', target], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -35,7 +37,7 @@ class Make(Build):
                     continue
                 else:
                     self.get_logger().set_execution_status(False)
-                    return False
+                    ret_status = False
 
         os.chdir(cwd)
-        return True
+        return ret_status
