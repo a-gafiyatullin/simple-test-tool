@@ -38,6 +38,7 @@ class Make(Build):
                 else:
                     self.get_logger().set_execution_status(False)
                     ret_status = False
+                    break
 
         os.chdir(cwd)
         return ret_status

@@ -40,6 +40,7 @@ class Cmake(Build):
                     else:
                         self.get_logger().set_execution_status(False)
                         ret_status = False
+                        break
         else:
             self.log('Makefile generation ERROR!')
             self.get_logger().set_execution_status(not self._get_interrupt_if_fail())
